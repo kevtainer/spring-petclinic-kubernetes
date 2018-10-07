@@ -1,0 +1,82 @@
+image: docker:stable-git
+
+services:
+  - docker:dind
+
+stages:
+  - manual
+  - build
+  - push
+  - deploy
+
+variables:
+  MAVEN_OPTS: "-Dhttps.protocols=TLSv1.2 -Dmaven.repo.local=$CI_PROJECT_DIR/.m2/repository -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=WARN -Dorg.slf4j.simpleLogger.showDateTime=true -Djava.awt.headless=true"
+  MAVEN_CLI_OPTS: "--batch-mode --errors --fail-at-end --show-version"
+
+cache:
+  paths:
+  - .m2/repository
+
+build-artifacts:
+  stage: build
+  image: registry.gitlab.com/opentracing-workshop/build-mvn-jdk10:latest
+  except:
+    - tags
+  script:
+    - mvn clean install
+    - chmod a+x ./scripts/prepare.sh && ./scripts/prepare.sh
+  artifacts:
+    paths:
+    - target
+
+push-images:
+  stage: push
+  cache: {}
+  except:
+    - tags
+  script:
+    - apk add --no-cache bash
+    - echo ${CI_BUILD_TOKEN} | docker login -u gitlab-ci-token --password-stdin ${CI_REGISTRY}
+    - chmod a+x ./scripts/image_build.sh && ./scripts/image_build.sh
+
+# deploys functional assets for the application to serve requests.
+# database servers, cache servers, and ingress/routing rules
+deploy-essentials:
+  stage: manual
+  image: registry.gitlab.com/opentracing-workshop/build-tools:latest
+  cache: {}
+  except:
+    - tags
+  when: manual
+  allow_failure: true
+  environment:
+    name: prod
+  script:
+  - chmod a+x ./scripts/deploy_backbone.sh && ./scripts/deploy_backbone.sh
+
+deploy-services:
+  stage: manual
+  image: registry.gitlab.com/opentracing-workshop/build-tools:latest
+  cache: {}
+  except:
+  - tags
+  when: manual
+  allow_failure: true
+  environment:
+    name: prod
+  script:
+  - chmod a+x ./scripts/deploy_modules.sh && ./scripts/deploy_modules.sh
+
+k8s-info:
+  cache: {}
+  stage: manual
+  image:
+    name: registry.gitlab.com/opentracing-workshop/build-tools:latest
+  environment:
+    name: prod
+  when: manual
+  allow_failure: true
+  except:
+    - tags
+  script:
+    - kubectl version

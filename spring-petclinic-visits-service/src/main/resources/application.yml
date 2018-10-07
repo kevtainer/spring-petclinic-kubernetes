@@ -1,0 +1,45 @@
+server.port: 8080
+
+# Spring Config
+spring:
+  application:
+    name: visits-service
+  boot:
+    admin:
+      client:
+        auto-deregistration: true
+        url: "http://admin-server:8080"
+        instance:
+          prefer-ip: true
+  cloud:
+    refresh:
+      refreshable: false
+  datasource:
+    schema: classpath*:db/mysql/schema.sql
+    data: classpath*:db/mysql/data.sql
+    url: jdbc:mysql://database-server:3306/petclinic?useSSL=false
+    username: root
+    password: petclinic
+    initialization-mode: ALWAYS
+  jpa:
+    hibernate:
+      ddl-auto: none
+
+# Logging
+logging.level.org.springframework: INFO
+
+# Metrics
+management:
+  endpoint:
+    metrics:
+      enabled: true
+    prometheus:
+      enabled: true
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+  metrics:
+    export:
+      prometheus:
+        enabled: true

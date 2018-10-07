@@ -1,0 +1,57 @@
+alertmanager:
+  ingress:
+    enabled: true
+    annotations:
+      kubernetes.io/ingress.class: nginx
+    hosts:
+    - alertmanager.spc.lab.nashdocker.io
+    tls: []
+  storageSpec:
+    volumeClaimTemplate:
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        resources:
+          requests:
+            storage: 10Gi
+
+prometheus:
+  ingress:
+    enabled: true
+    annotations:
+      kubernetes.io/ingress.class: nginx
+    hosts:
+    - prometheus.spc.lab.nashdocker.io
+    tls: []
+  resources:
+    requests:
+      memory: "400Mi"
+      cpu: "500m"
+  serviceMonitors:
+  - name: spring-petclinic
+    selector:
+      matchLabels:
+        chart: spring-petclinic-kubernetes-0.1.0
+    namespaceSelector:
+      matchNames: [ 'spc' ]
+    endpoints:
+    - port: http
+      path: /actuator/prometheus
+  storageSpec:
+    volumeClaimTemplate:
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        resources:
+          requests:
+            storage: 10Gi
+
+grafana:
+  auth:
+    anonymous:
+      enabled: "true"
+  ingress:
+    enabled: true
+    annotations:
+      kubernetes.io/ingress.class: nginx
+    hosts:
+    - grafana.spc.lab.nashdocker.io
+    tls: []

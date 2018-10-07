@@ -1,0 +1,54 @@
+image: "mysql"
+imageTag: "5.7.14"
+mysqlRootPassword: petclinic
+mysqlDatabase: petclinic
+imagePullPolicy: IfNotPresent
+nodeSelector: {}
+livenessProbe:
+  initialDelaySeconds: 30
+  periodSeconds: 10
+  timeoutSeconds: 5
+  successThreshold: 1
+  failureThreshold: 3
+readinessProbe:
+  initialDelaySeconds: 5
+  periodSeconds: 10
+  timeoutSeconds: 1
+  successThreshold: 1
+  failureThreshold: 3
+## Persist data to a persistent volume
+persistence:
+  enabled: true
+  storageClass: "standard"
+  accessMode: ReadWriteOnce
+  size: 8Gi
+  annotations: {}
+resources:
+  requests:
+    memory: 256Mi
+    cpu: 100m
+configurationFiles: {}
+initializationFiles: {}
+metrics:
+  enabled: false
+  image: prom/mysqld-exporter
+  imageTag: v0.10.0
+  imagePullPolicy: IfNotPresent
+  resources: {}
+  annotations: {}
+    # prometheus.io/scrape: "true"
+    # prometheus.io/port: "9104"
+  livenessProbe:
+    initialDelaySeconds: 15
+    timeoutSeconds: 5
+  readinessProbe:
+    initialDelaySeconds: 5
+    timeoutSeconds: 1
+service:
+  type: ClusterIP
+  port: 3306
+ssl:
+  enabled: false
+  secret: mysql-ssl-certs
+  certificates:
+podAnnotations: {}

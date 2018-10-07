@@ -1,0 +1,46 @@
+server.port: 8080
+
+# Logging
+logging.level.org.springframework: INFO
+
+# Spring Config
+spring:
+  application:
+    name: owners-service
+  config:
+    name: configserver
+  cloud:
+    config:
+      enabled: false
+  boot:
+    admin:
+      client:
+        auto-deregistration: true
+        url: "http://admin-server:8080"
+        instance:
+          prefer-ip: true
+
+# Metrics
+management:
+  endpoint:
+    metrics:
+      enabled: true
+    prometheus:
+      enabled: true
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+  metrics:
+    export:
+      prometheus:
+        enabled: true
+
+customers-service:
+  ribbon:
+    eureka:
+      enabled: false
+visits-service:
+  ribbon:
+    eureka:
+      enabled: false
