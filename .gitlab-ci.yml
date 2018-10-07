@@ -23,7 +23,8 @@ build-artifacts:
   except:
     - tags
   script:
-    - mvn clean install
+    - mvn clean
+    - mvn install
     - chmod a+x ./scripts/prepare.sh && ./scripts/prepare.sh
   artifacts:
     paths:
