@@ -19,9 +19,7 @@ class UserBehavior(TaskSet):
 
         for owner in owners:
             ownerid = owner['id']
-            #print('Owner {}'.format(ownerid))
             self.client.get('/api/owner/owners/{}'.format(ownerid))
-            #print('Owner {}'.format(owner))
 
         if os.environ['INJECT'] == "1":
             if randint(1, 100) <= 25:
@@ -35,7 +33,7 @@ class UserBehavior(TaskSet):
                 owner = self.client.post('/api/customer/owners', json=owner).json()
                 ownerid = owner['id']
 
-                for i in range(randint(0,2)):
+                for i in range(randint(1,3)):
                     pet = {
                         "birthDate": fake.iso8601(),
                         "id": 0,
@@ -45,10 +43,10 @@ class UserBehavior(TaskSet):
                     pet = self.client.post('/api/customer/owners/{}/pets'.format(ownerid), json=pet).json()
                     petid = pet['id']
 
-                    for i in range(randint(1,5)):
+                    for i in range(randint(0,4)):
                         visit = {
                             "date": fake.date(),
-                            "description": fake.paragraphs()
+                            "description": fake.text()
                         }
                         self.client.post('/api/visit/owners/{}/pets/{}/visits'.format(ownerid,petid), json=visit)
 
