@@ -24,16 +24,33 @@ class UserBehavior(TaskSet):
             #print('Owner {}'.format(owner))
 
         if os.environ['INJECT'] == "1":
-            #if randint(1, 100) <= 25:
-            owner = {
-                "address":fake.street_address(),
-                "city":fake.city(),
-                "firstName":fake.first_name(),
-                "lastName":fake.last_name(),
-                "telephone": randint(1000000000,9999999999)
-            }
-            res = self.client.post('/api/customer/owners', json=owner)
-            print('New Owner {}'.format(res))
+            if randint(1, 100) <= 25:
+                owner = {
+                    "address":fake.street_address(),
+                    "city":fake.city(),
+                    "firstName":fake.first_name(),
+                    "lastName":fake.last_name(),
+                    "telephone": randint(1000000000,9999999999)
+                }
+                owner = self.client.post('/api/customer/owners', json=owner).json()
+                ownerid = owner['id']
+
+                for i in range(randint(0,2)):
+                    pet = {
+                        "birthDate": fake.iso8601(),
+                        "id": 0,
+                        "name": fake.first_name(),
+                        "typeId": randint(1,6)
+                    }
+                    pet = self.client.post('/api/customer/owners/{}/pets'.format(ownerid), json=pet).json()
+                    petid = pet['id']
+
+                    for i in range(randint(1,5)):
+                        visit = {
+                            "date": fake.date(),
+                            "description": fake.paragraphs()
+                        }
+                        self.client.post('/api/visit/owners/{}/pets/{}/visits'.format(ownerid,petid), json=visit)
 
 
 class WebsiteUser(HttpLocust):

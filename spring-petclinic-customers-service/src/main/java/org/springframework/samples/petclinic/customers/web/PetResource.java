@@ -43,8 +43,8 @@ class PetResource {
     }
 
     @PostMapping("/owners/{ownerId}/pets")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void processCreationForm(
+    @ResponseStatus(HttpStatus.CREATED)
+    public Pet processCreationForm(
         @RequestBody PetRequest petRequest,
         @PathVariable("ownerId") int ownerId) {
 
@@ -54,20 +54,20 @@ class PetResource {
         owner.addPet(pet);
 
         registry.counter("create.pet").increment();
-        save(pet, petRequest);
+        return save(pet, petRequest);
     }
 
     @PutMapping("/owners/*/pets/{petId}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void processUpdateForm(@RequestBody PetRequest petRequest) {
+    @ResponseStatus(HttpStatus.OK)
+    public Pet processUpdateForm(@RequestBody PetRequest petRequest) {
         int petId = petRequest.getId();
         Pet pet = findPetById(petId);
 
         registry.counter("update.pet").increment();
-        save(pet, petRequest);
+        return save(pet, petRequest);
     }
 
-    private void save(final Pet pet, final PetRequest petRequest) {
+    private Pet save(final Pet pet, final PetRequest petRequest) {
 
         pet.setName(petRequest.getName());
         pet.setBirthDate(petRequest.getBirthDate());
@@ -76,7 +76,7 @@ class PetResource {
             .ifPresent(pet::setType);
 
         log.info("Saving pet {}", pet);
-        petRepository.save(pet);
+        return petRepository.save(pet);
     }
 
     @GetMapping("owners/*/pets/{petId}")
