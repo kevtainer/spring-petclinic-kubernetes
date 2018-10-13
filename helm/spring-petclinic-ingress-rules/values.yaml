@@ -1,2 +1,2 @@
 ingress:
-  host: "spc.lab.nashdocker.io"
+  hosts: ["spc.lab.nashdocker.io"]
