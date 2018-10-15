@@ -1,7 +1,7 @@
 apiVersion: apps/v1beta2
 kind: Deployment
 metadata:
-  name: {{ include "spring-petclinic-kubernetes.fullname" . }}
+  name: {{ .Release.Name }}
   labels:
     app: {{ include "spring-petclinic-kubernetes.name" . }}
     chart: {{ include "spring-petclinic-kubernetes.chart" . }}
@@ -20,7 +20,7 @@ spec:
         release: {{ .Release.Name }}
     spec:
       containers:
-        - name: {{ .Chart.Name }}
+        - name: {{ .Release.Name }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           {{- with .Values.command }}
           command:
@@ -28,10 +28,10 @@ spec:
           {{- end }}
           env:
             {{- if .Values.jaeger.enabled }}
-            - name: JAEGER_ENDPOINT
-              value: "http://jaeger-collector.default.svc.cluster.local:14268/api/traces"
             - name: SPRING_PROFILES_ACTIVE
               value: "jaegertracing"
+            - name: JAEGER_ENDPOINT
+              value: "http://jaeger-collector.default.svc.cluster.local:14268/api/traces"
             - name: JAEGER_SAMPLER_TYPE
               value: "const"
             - name: JAEGER_SAMPLER_PARAM
@@ -51,7 +51,7 @@ spec:
               path: /actuator/health
               port: http
             initialDelaySeconds: 120
-            timeoutSeconds: 10
+            timeoutSeconds: 30
             failureThreshold: 10
           readinessProbe:
             httpGet:

@@ -24,11 +24,11 @@ jaeger:
 
 resources:
   requests:
-    cpu: 300m
+    cpu: "0.5"
     memory: "800Mi"
   limits:
-    cpu: 500m
-    memory: "800Mi"
+    cpu: "1"
+    memory: "1Gi"
 nodeSelector: {}
 tolerations: []
 affinity: {}

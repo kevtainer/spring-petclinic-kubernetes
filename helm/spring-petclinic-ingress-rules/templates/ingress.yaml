@@ -15,26 +15,26 @@ spec:
   rules:
   {{- range .Values.ingress.hosts }}
     - host: {{ . | quote }}
-    http:
-      paths:
-      - backend:
-          serviceName: owners-service
-          servicePort: 8080
-        path: /api/owner
-      - backend:
-          serviceName: visits-service
-          servicePort: 8080
-        path: /api/visit
-      - backend:
-          serviceName: customers-service
-          servicePort: 8080
-        path: /api/customer
-      - backend:
-          serviceName: vets-service
-          servicePort: 8080
-        path: /api/vet
-      - backend:
-          serviceName: frontend-service
-          servicePort: 8080
-        path: /
+      http:
+        paths:
+        - backend:
+            serviceName: owners-service
+            servicePort: 8080
+          path: /api/owner
+        - backend:
+            serviceName: visits-service
+            servicePort: 8080
+          path: /api/visit
+        - backend:
+            serviceName: customers-service
+            servicePort: 8080
+          path: /api/customer
+        - backend:
+            serviceName: vets-service
+            servicePort: 8080
+          path: /api/vet
+        - backend:
+            serviceName: frontend-service
+            servicePort: 8080
+          path: /
   {{- end }}

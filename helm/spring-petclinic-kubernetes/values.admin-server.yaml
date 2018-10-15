@@ -30,10 +30,10 @@ jaeger:
 
 resources:
   requests:
-    cpu: "300m"
+    cpu: "0.3"
     memory: "384Mi"
   limits:
-    cpu: "500m"
+    cpu: "0.5"
     memory: "384Mi"
 nodeSelector: {}
 tolerations: []

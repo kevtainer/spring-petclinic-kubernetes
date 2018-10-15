@@ -15,6 +15,10 @@ data:
     # after 'configuration-abc.yaml'. Only nested structures are merged, values are
     # overwritten by subsequent configurations.
 
+    com.instana.plugin.mysql:
+      user: 'instana_mon'
+      password: 'yourface'
+
     # Secrets
     # To filter sensitive data from collection by the agent, all sensors respect
     # the following secrets configuration. If a key collected by a sensor matches

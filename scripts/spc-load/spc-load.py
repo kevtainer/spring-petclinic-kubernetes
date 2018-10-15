@@ -17,9 +17,8 @@ class UserBehavior(TaskSet):
         self.client.get('/api/vet/vets').json()
         owners = self.client.get('/api/customer/owners').json()
 
-        for owner in owners:
-            ownerid = owner['id']
-            self.client.get('/api/owner/owners/{}'.format(ownerid))
+        for i in range(20):
+            self.client.get('/api/owner/owners/{}'.format(randint(1, len(owners))))
 
         if os.environ['INJECT'] == "1":
             if randint(1, 100) <= 25:

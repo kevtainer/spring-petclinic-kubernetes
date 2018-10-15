@@ -30,14 +30,12 @@ resources:
 configurationFiles: {}
 initializationFiles: {}
 metrics:
-  enabled: false
+  enabled: true
   image: prom/mysqld-exporter
   imageTag: v0.10.0
   imagePullPolicy: IfNotPresent
   resources: {}
   annotations: {}
-    # prometheus.io/scrape: "true"
-    # prometheus.io/port: "9104"
   livenessProbe:
     initialDelaySeconds: 15
     timeoutSeconds: 5
@@ -51,4 +49,6 @@ ssl:
   enabled: false
   secret: mysql-ssl-certs
   certificates:
-podAnnotations: {}
+podAnnotations:
+  prometheus.io/scrape: "true"
+  prometheus.io/port: "9104"

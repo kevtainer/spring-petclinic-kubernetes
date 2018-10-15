@@ -7,7 +7,7 @@ rbac:
   create: true
 
 instana:
-  zone: k8s-cluster-name
+  zone: spc-demo-env
   leaderElectorPort: 42655
   agent:
     resources:
@@ -16,7 +16,6 @@ instana:
         cpu: "0.5"
       limits:
         memory: "512Mi"
-        cpu: "1.5"
     #key: your-key
     name: instana-agent
     endpoint:
