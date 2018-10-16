@@ -57,7 +57,7 @@ do
     image_path=${CI_REGISTRY_IMAGE}/${module}
     image_versioned=${image_path}:${spc_version}
 
-    if [ service_name == "admin-server" ]; then
+    if [[ "$service_name" == "admin-server" ]; then
         INGRESS_OVERRIDE="ingress.hosts={admin.${WILDCARD_HOST}},"
     fi
 
