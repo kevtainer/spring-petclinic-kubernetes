@@ -18,6 +18,9 @@
     <factorypathentry kind="VARJAR" id="M2_REPO/com/fasterxml/jackson/core/jackson-core/2.9.6/jackson-core-2.9.6.jar" enabled="true" runInBatchMode="false"/>
     <factorypathentry kind="VARJAR" id="M2_REPO/org/springframework/spring-context/5.0.9.RELEASE/spring-context-5.0.9.RELEASE.jar" enabled="true" runInBatchMode="false"/>
     <factorypathentry kind="VARJAR" id="M2_REPO/com/fasterxml/jackson/datatype/jackson-datatype-jsr310/2.9.6/jackson-datatype-jsr310-2.9.6.jar" enabled="true" runInBatchMode="false"/>
+    <factorypathentry kind="VARJAR" id="M2_REPO/io/micrometer/micrometer-core/1.0.6/micrometer-core-1.0.6.jar" enabled="true" runInBatchMode="false"/>
+    <factorypathentry kind="VARJAR" id="M2_REPO/org/hdrhistogram/HdrHistogram/2.1.10/HdrHistogram-2.1.10.jar" enabled="true" runInBatchMode="false"/>
+    <factorypathentry kind="VARJAR" id="M2_REPO/org/latencyutils/LatencyUtils/2.0.3/LatencyUtils-2.0.3.jar" enabled="true" runInBatchMode="false"/>
     <factorypathentry kind="VARJAR" id="M2_REPO/org/springframework/boot/spring-boot-starter-data-jpa/2.0.5.RELEASE/spring-boot-starter-data-jpa-2.0.5.RELEASE.jar" enabled="true" runInBatchMode="false"/>
     <factorypathentry kind="VARJAR" id="M2_REPO/org/springframework/boot/spring-boot-starter-aop/2.0.5.RELEASE/spring-boot-starter-aop-2.0.5.RELEASE.jar" enabled="true" runInBatchMode="false"/>
     <factorypathentry kind="VARJAR" id="M2_REPO/org/springframework/spring-aop/5.0.9.RELEASE/spring-aop-5.0.9.RELEASE.jar" enabled="true" runInBatchMode="false"/>
@@ -72,46 +75,4 @@
     <factorypathentry kind="VARJAR" id="M2_REPO/org/jolokia/jolokia-core/1.5.0/jolokia-core-1.5.0.jar" enabled="true" runInBatchMode="false"/>
     <factorypathentry kind="VARJAR" id="M2_REPO/com/googlecode/json-simple/json-simple/1.1.1/json-simple-1.1.1.jar" enabled="true" runInBatchMode="false"/>
     <factorypathentry kind="VARJAR" id="M2_REPO/org/projectlombok/lombok/1.16.22/lombok-1.16.22.jar" enabled="true" runInBatchMode="false"/>
-    <factorypathentry kind="VARJAR" id="M2_REPO/io/micrometer/micrometer-core/1.0.6/micrometer-core-1.0.6.jar" enabled="true" runInBatchMode="false"/>
-    <factorypathentry kind="VARJAR" id="M2_REPO/org/hdrhistogram/HdrHistogram/2.1.10/HdrHistogram-2.1.10.jar" enabled="true" runInBatchMode="false"/>
-    <factorypathentry kind="VARJAR" id="M2_REPO/org/latencyutils/LatencyUtils/2.0.3/LatencyUtils-2.0.3.jar" enabled="true" runInBatchMode="false"/>
-    <factorypathentry kind="VARJAR" id="M2_REPO/io/micrometer/micrometer-registry-prometheus/1.0.6/micrometer-registry-prometheus-1.0.6.jar" enabled="true" runInBatchMode="false"/>
-    <factorypathentry kind="VARJAR" id="M2_REPO/io/prometheus/simpleclient_common/0.4.0/simpleclient_common-0.4.0.jar" enabled="true" runInBatchMode="false"/>
-    <factorypathentry kind="VARJAR" id="M2_REPO/io/prometheus/simpleclient/0.4.0/simpleclient-0.4.0.jar" enabled="true" runInBatchMode="false"/>
-    <factorypathentry kind="VARJAR" id="M2_REPO/io/jaegertracing/jaeger-client/0.30.2/jaeger-client-0.30.2.jar" enabled="true" runInBatchMode="false"/>
-    <factorypathentry kind="VARJAR" id="M2_REPO/io/jaegertracing/jaeger-thrift/0.30.2/jaeger-thrift-0.30.2.jar" enabled="true" runInBatchMode="false"/>
-    <factorypathentry kind="VARJAR" id="M2_REPO/io/jaegertracing/jaeger-core/0.30.2/jaeger-core-0.30.2.jar" enabled="true" runInBatchMode="false"/>
-    <factorypathentry kind="VARJAR" id="M2_REPO/io/opentracing/opentracing-util/0.31.0/opentracing-util-0.31.0.jar" enabled="true" runInBatchMode="false"/>
-    <factorypathentry kind="VARJAR" id="M2_REPO/io/opentracing/opentracing-noop/0.31.0/opentracing-noop-0.31.0.jar" enabled="true" runInBatchMode="false"/>
-    <factorypathentry kind="VARJAR" id="M2_REPO/com/google/code/gson/gson/2.8.5/gson-2.8.5.jar" enabled="true" runInBatchMode="false"/>
-    <factorypathentry kind="VARJAR" id="M2_REPO/io/jaegertracing/jaeger-tracerresolver/0.30.2/jaeger-tracerresolver-0.30.2.jar" enabled="true" runInBatchMode="false"/>
-    <factorypathentry kind="VARJAR" id="M2_REPO/io/opentracing/contrib/opentracing-tracerresolver/0.1.4/opentracing-tracerresolver-0.1.4.jar" enabled="true" runInBatchMode="false"/>
-    <factorypathentry kind="VARJAR" id="M2_REPO/io/opentracing/contrib/opentracing-spring-cloud-starter/0.2.0/opentracing-spring-cloud-starter-0.2.0.jar" enabled="true" runInBatchMode="false"/>
-    <factorypathentry kind="VARJAR" id="M2_REPO/io/opentracing/contrib/opentracing-spring-cloud-core/0.2.0/opentracing-spring-cloud-core-0.2.0.jar" enabled="true" runInBatchMode="false"/>
-    <factorypathentry kind="VARJAR" id="M2_REPO/io/opentracing/contrib/opentracing-spring-tracer-configuration-starter/0.1.0/opentracing-spring-tracer-configuration-starter-0.1.0.jar" enabled="true" runInBatchMode="false"/>
-    <factorypathentry kind="VARJAR" id="M2_REPO/io/opentracing/contrib/opentracing-concurrent/0.1.0/opentracing-concurrent-0.1.0.jar" enabled="true" runInBatchMode="false"/>
-    <factorypathentry kind="VARJAR" id="M2_REPO/io/opentracing/contrib/opentracing-spring-web-starter/0.3.3/opentracing-spring-web-starter-0.3.3.jar" enabled="true" runInBatchMode="false"/>
-    <factorypathentry kind="VARJAR" id="M2_REPO/io/opentracing/contrib/opentracing-spring-web/0.3.3/opentracing-spring-web-0.3.3.jar" enabled="true" runInBatchMode="false"/>
-    <factorypathentry kind="VARJAR" id="M2_REPO/io/opentracing/contrib/opentracing-web-servlet-filter/0.1.0/opentracing-web-servlet-filter-0.1.0.jar" enabled="true" runInBatchMode="false"/>
-    <factorypathentry kind="VARJAR" id="M2_REPO/io/opentracing/contrib/opentracing-spring-messaging-starter/0.0.5/opentracing-spring-messaging-starter-0.0.5.jar" enabled="true" runInBatchMode="false"/>
-    <factorypathentry kind="VARJAR" id="M2_REPO/io/opentracing/contrib/opentracing-spring-messaging/0.0.5/opentracing-spring-messaging-0.0.5.jar" enabled="true" runInBatchMode="false"/>
-    <factorypathentry kind="VARJAR" id="M2_REPO/io/opentracing/contrib/opentracing-spring-rabbitmq-starter/0.1.0/opentracing-spring-rabbitmq-starter-0.1.0.jar" enabled="true" runInBatchMode="false"/>
-    <factorypathentry kind="VARJAR" id="M2_REPO/io/opentracing/contrib/opentracing-spring-rabbitmq/0.1.0/opentracing-spring-rabbitmq-0.1.0.jar" enabled="true" runInBatchMode="false"/>
-    <factorypathentry kind="VARJAR" id="M2_REPO/io/opentracing/contrib/opentracing-spring-cloud-jdbc-starter/0.2.0/opentracing-spring-cloud-jdbc-starter-0.2.0.jar" enabled="true" runInBatchMode="false"/>
-    <factorypathentry kind="VARJAR" id="M2_REPO/io/opentracing/contrib/opentracing-jdbc/0.0.6/opentracing-jdbc-0.0.6.jar" enabled="true" runInBatchMode="false"/>
-    <factorypathentry kind="VARJAR" id="M2_REPO/io/opentracing/contrib/opentracing-spring-cloud-jms-starter/0.2.0/opentracing-spring-cloud-jms-starter-0.2.0.jar" enabled="true" runInBatchMode="false"/>
-    <factorypathentry kind="VARJAR" id="M2_REPO/io/opentracing/contrib/opentracing-jms-spring/0.0.8/opentracing-jms-spring-0.0.8.jar" enabled="true" runInBatchMode="false"/>
-    <factorypathentry kind="VARJAR" id="M2_REPO/io/opentracing/contrib/opentracing-jms-1/0.0.8/opentracing-jms-1-0.0.8.jar" enabled="true" runInBatchMode="false"/>
-    <factorypathentry kind="VARJAR" id="M2_REPO/io/opentracing/contrib/opentracing-jms-common/0.0.8/opentracing-jms-common-0.0.8.jar" enabled="true" runInBatchMode="false"/>
-    <factorypathentry kind="VARJAR" id="M2_REPO/io/opentracing/contrib/opentracing-spring-cloud-feign-starter/0.2.0/opentracing-spring-cloud-feign-starter-0.2.0.jar" enabled="true" runInBatchMode="false"/>
-    <factorypathentry kind="VARJAR" id="M2_REPO/io/github/openfeign/opentracing/feign-opentracing/0.1.0/feign-opentracing-0.1.0.jar" enabled="true" runInBatchMode="false"/>
-    <factorypathentry kind="VARJAR" id="M2_REPO/io/github/openfeign/opentracing/feign-hystrix-opentracing/0.1.0/feign-hystrix-opentracing-0.1.0.jar" enabled="true" runInBatchMode="false"/>
-    <factorypathentry kind="VARJAR" id="M2_REPO/io/opentracing/contrib/opentracing-spring-cloud-hystrix-starter/0.2.0/opentracing-spring-cloud-hystrix-starter-0.2.0.jar" enabled="true" runInBatchMode="false"/>
-    <factorypathentry kind="VARJAR" id="M2_REPO/io/opentracing/contrib/opentracing-spring-cloud-rxjava-starter/0.2.0/opentracing-spring-cloud-rxjava-starter-0.2.0.jar" enabled="true" runInBatchMode="false"/>
-    <factorypathentry kind="VARJAR" id="M2_REPO/io/opentracing/contrib/opentracing-rxjava-1/0.0.7/opentracing-rxjava-1-0.0.7.jar" enabled="true" runInBatchMode="false"/>
-    <factorypathentry kind="VARJAR" id="M2_REPO/io/opentracing/contrib/opentracing-spring-cloud-mongo-starter/0.2.0/opentracing-spring-cloud-mongo-starter-0.2.0.jar" enabled="true" runInBatchMode="false"/>
-    <factorypathentry kind="VARJAR" id="M2_REPO/io/opentracing/contrib/opentracing-mongo-driver/0.0.4/opentracing-mongo-driver-0.0.4.jar" enabled="true" runInBatchMode="false"/>
-    <factorypathentry kind="VARJAR" id="M2_REPO/io/opentracing/contrib/opentracing-spring-cloud-websocket-starter/0.2.0/opentracing-spring-cloud-websocket-starter-0.2.0.jar" enabled="true" runInBatchMode="false"/>
-    <factorypathentry kind="VARJAR" id="M2_REPO/io/opentracing/contrib/opentracing-spring-cloud-zuul-starter/0.2.0/opentracing-spring-cloud-zuul-starter-0.2.0.jar" enabled="true" runInBatchMode="false"/>
-    <factorypathentry kind="VARJAR" id="M2_REPO/io/opentracing/opentracing-api/0.31.0/opentracing-api-0.31.0.jar" enabled="true" runInBatchMode="false"/>
 </factorypath>

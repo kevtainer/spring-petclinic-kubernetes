@@ -15,7 +15,6 @@
  */
 package org.springframework.samples.petclinic.owners;
 
-import io.jaegertracing.Configuration;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.loadbalancer.LoadBalanced;
@@ -28,12 +27,6 @@ public class OwnersApplication {
 
     public static void main(String[] args) {
         SpringApplication.run(OwnersApplication.class, args);
-    }
-
-    @Bean
-    @Profile("jaegertracing")
-    public io.opentracing.Tracer getTracer() {
-        return Configuration.fromEnv().getTracer();
     }
 
     @Bean
