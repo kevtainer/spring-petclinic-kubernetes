@@ -15,7 +15,6 @@
  */
 package org.springframework.samples.petclinic.frontend;
 
-import io.jaegertracing.Configuration;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.loadbalancer.LoadBalanced;
@@ -27,12 +26,6 @@ import org.springframework.web.client.RestTemplate;
 public class FrontendApplication {
     public static void main(String[] args) {
         SpringApplication.run(FrontendApplication.class, args);
-    }
-
-    @Bean
-    @Profile("jaegertracing")
-    public io.opentracing.Tracer getTracer() {
-        return Configuration.fromEnv().getTracer();
     }
 
     @Bean

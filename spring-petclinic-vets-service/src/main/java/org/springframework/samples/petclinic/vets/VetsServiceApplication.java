@@ -15,7 +15,6 @@
  */
 package org.springframework.samples.petclinic.vets;
 
-import io.jaegertracing.Configuration;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -30,10 +29,4 @@ public class VetsServiceApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(VetsServiceApplication.class, args);
 	}
-
-    @Bean
-    @Profile("jaegertracing")
-    public io.opentracing.Tracer getTracer() {
-        return Configuration.fromEnv().getTracer();
-    }
 }
