@@ -42,8 +42,8 @@ push-images:
 
 # deploys functional assets for the application to serve requests.
 # database servers, cache servers, and ingress/routing rules
-deploy-essentials:
-  stage: manual
+deploy-dependencies:
+  stage: deploy
   image: registry.gitlab.com/opentracing-workshop/build-tools:latest
   cache: {}
   except:
@@ -53,10 +53,10 @@ deploy-essentials:
   environment:
     name: prod
   script:
-  - chmod a+x ./scripts/deploy_backbone.sh && ./scripts/deploy_backbone.sh
+  - chmod a+x ./scripts/deploy_backend.sh && ./scripts/deploy_backend.sh
 
 deploy-services:
-  stage: manual
+  stage: deploy
   image: registry.gitlab.com/opentracing-workshop/build-tools:latest
   cache: {}
   except:
@@ -66,9 +66,9 @@ deploy-services:
   environment:
     name: prod
   script:
-  - chmod a+x ./scripts/deploy_modules.sh && ./scripts/deploy_modules.sh
+  - chmod a+x ./scripts/deploy_services.sh && ./scripts/deploy_services.sh
 
-k8s-info:
+validate-k8s:
   cache: {}
   stage: manual
   image:
@@ -81,3 +81,4 @@ k8s-info:
     - tags
   script:
     - kubectl version
+    - echo $INGRESS_IP

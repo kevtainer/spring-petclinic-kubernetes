@@ -36,22 +36,35 @@ if [ -z "$TILLER_NAMESPACE" ]; then
   fi
 fi
 
+if [ -z "$INGRESS_IP" ]; then
+  echo "No INGRESS_IP environment variable set. Is your repository CI/CD configured properly?"
+  exit 1
+fi
+
 echo "Using tiller in namespace $TILLER_NAMESPACE"
+
+WILDCARD_HOST=spc.${INGRESS_IP}.nip.io
 
 for module in "${spc_modules[@]}"
 do
+    INGRESS_OVERRIDE=""
+
     echo "Current release:"
     helm ls --tiller-namespace "$TILLER_NAMESPACE" --namespace "$KUBE_NAMESPACE" ${module}
 
     image_path=${CI_REGISTRY_IMAGE}/${module}
     image_versioned=${image_path}:${spc_version}
 
+    if [ module == "admin-server" ]; then
+        INGRESS_OVERRIDE="ingress.hosts={admin.${WILDCARD_HOST}},"
+    fi
+
     echo
     echo "Deploying ${module} :: ${spc_version} (git ${CI_COMMIT_TAG:-$CI_COMMIT_REF_NAME} $CI_COMMIT_SHA)"
     set -x
-    helm upgrade --install \
+    helm upgrade --install --reset-values \
         --tiller-namespace "$TILLER_NAMESPACE" --namespace "$KUBE_NAMESPACE" \
-        --reset-values --set="fullnameOverride=${module},imageTag=${spc_version}" \
+        --set="${INGRESS_OVERRIDE}fullnameOverride=${module},imageTag=${spc_version}" \
         --values helm/spring-petclinic-kubernetes/values.${module}.yaml \
         ${module} helm/spring-petclinic-kubernetes
     { set +x; } 2>/dev/null

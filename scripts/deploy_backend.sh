@@ -22,4 +22,25 @@ if [ -z "$TILLER_NAMESPACE" ]; then
   fi
 fi
 
-# @todo
+if [ -z "$INGRESS_IP" ]; then
+  echo "No INGRESS_IP environment variable set. Is your repository CI/CD configured properly?"
+  exit 1
+fi
+
+WILDCARD_HOST=spc.${INGRESS_IP}.nip.io
+
+# ingress rules for petclinic application
+helm upgrade --install --reset-values \
+  --tiller-namespace ${TILLER_NAMESPACE} --namespace ${KUBE_NAMESPACE} \
+  --set ingress.hosts={${WILDCARD_HOST}} \
+  --values helm/spring-petclinic-ingress-rules/values.yaml \
+  spc-ingress-rules helm/spring-petclinic-ingress-rules
+
+# database server for petclinic application
+helm upgrade --install --reset-values \
+  --tiller-namespace spc --namespace spc \
+  --set=fullnameOverride=database-server \
+  --values helm/spring-petclinic-database-server/values.yaml \
+  database-server stable/mysql
+
+  
