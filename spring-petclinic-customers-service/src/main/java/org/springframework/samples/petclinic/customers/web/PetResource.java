@@ -15,7 +15,6 @@
  */
 package org.springframework.samples.petclinic.customers.web;
 
-import io.micrometer.core.instrument.MeterRegistry;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.samples.petclinic.customers.model.*;
@@ -29,12 +28,10 @@ import java.util.Optional;
 class PetResource {
     private final PetRepository petRepository;
     private final OwnerRepository ownerRepository;
-    private final MeterRegistry registry;
 
-    PetResource(PetRepository petRepository, OwnerRepository ownerRepository, MeterRegistry registry) {
+    PetResource(PetRepository petRepository, OwnerRepository ownerRepository) {
         this.petRepository = petRepository;
         this.ownerRepository = ownerRepository;
-        this.registry = registry;
     }
 
     @GetMapping("/petTypes")
@@ -53,7 +50,6 @@ class PetResource {
         Owner owner = optionalOwner.orElseThrow(() -> new ResourceNotFoundException("Owner "+ownerId+" not found"));
         owner.addPet(pet);
 
-        registry.counter("create.pet").increment();
         return save(pet, petRequest);
     }
 
@@ -63,7 +59,6 @@ class PetResource {
         int petId = petRequest.getId();
         Pet pet = findPetById(petId);
 
-        registry.counter("update.pet").increment();
         return save(pet, petRequest);
     }
 
