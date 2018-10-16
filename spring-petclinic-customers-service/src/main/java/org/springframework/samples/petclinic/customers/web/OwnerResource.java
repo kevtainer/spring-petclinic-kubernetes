@@ -15,8 +15,6 @@
  */
 package org.springframework.samples.petclinic.customers.web;
 
-import io.micrometer.core.instrument.Counter;
-import io.micrometer.core.instrument.MeterRegistry;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -32,14 +30,9 @@ import java.util.Optional;
 @RestController
 @Slf4j
 class OwnerResource {
-
-    private final Counter createOwnerCounter;
-    private final Counter updateOwnerCounter;
     private final OwnerRepository ownerRepository;
 
-    public OwnerResource(MeterRegistry registry, OwnerRepository ownerRepository) {
-        this.createOwnerCounter = registry.counter("create.owner");
-        this.updateOwnerCounter = registry.counter("update.owner");
+    public OwnerResource(OwnerRepository ownerRepository) {
         this.ownerRepository = ownerRepository;
     }
     /**
@@ -48,7 +41,6 @@ class OwnerResource {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public Owner createOwner(@Valid @RequestBody Owner owner) {
-        this.createOwnerCounter.increment();
         return ownerRepository.save(owner);
     }
 
@@ -83,7 +75,6 @@ class OwnerResource {
         ownerModel.setAddress(ownerRequest.getAddress());
         ownerModel.setTelephone(ownerRequest.getTelephone());
         log.info("Saving owner {}", ownerModel);
-        this.updateOwnerCounter.increment();
         return ownerRepository.save(ownerModel);
     }
 }
