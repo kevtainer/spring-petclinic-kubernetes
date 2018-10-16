@@ -44,28 +44,30 @@ fi
 echo "Using tiller in namespace $TILLER_NAMESPACE"
 
 WILDCARD_HOST=spc.${INGRESS_IP}.nip.io
+SERVICE_PREFIX=spring-petclinic-
 
 for module in "${spc_modules[@]}"
 do
     INGRESS_OVERRIDE=""
+    service_name=$(echo "$module" | grep -oP "^$SERVICE_PREFIX\K.*")
 
     echo "Current release:"
-    helm ls --tiller-namespace "$TILLER_NAMESPACE" --namespace "$KUBE_NAMESPACE" ${module}
+    helm ls --tiller-namespace "$TILLER_NAMESPACE" --namespace "$KUBE_NAMESPACE" ${service_name}
 
     image_path=${CI_REGISTRY_IMAGE}/${module}
     image_versioned=${image_path}:${spc_version}
 
-    if [ module == "admin-server" ]; then
+    if [ service_name == "admin-server" ]; then
         INGRESS_OVERRIDE="ingress.hosts={admin.${WILDCARD_HOST}},"
     fi
 
     echo
-    echo "Deploying ${module} :: ${spc_version} (git ${CI_COMMIT_TAG:-$CI_COMMIT_REF_NAME} $CI_COMMIT_SHA)"
+    echo "Deploying ${service_name} :: ${spc_version} (git ${CI_COMMIT_TAG:-$CI_COMMIT_REF_NAME} $CI_COMMIT_SHA)"
     set -x
     helm upgrade --install --reset-values \
         --tiller-namespace "$TILLER_NAMESPACE" --namespace "$KUBE_NAMESPACE" \
-        --set="${INGRESS_OVERRIDE}fullnameOverride=${module},imageTag=${spc_version}" \
-        --values helm/spring-petclinic-kubernetes/values.${module}.yaml \
-        ${module} helm/spring-petclinic-kubernetes
+        --set="${INGRESS_OVERRIDE}fullnameOverride=${service_name},imageTag=${spc_version}" \
+        --values helm/spring-petclinic-kubernetes/values.${service_name}.yaml \
+        ${service_name} helm/spring-petclinic-kubernetes
     { set +x; } 2>/dev/null
 done
