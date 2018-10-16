@@ -36,6 +36,9 @@ helm upgrade --install --reset-values \
   --values helm/spring-petclinic-ingress-rules/values.yaml \
   spc-ingress-rules helm/spring-petclinic-ingress-rules
 
+# get stable repo
+helm repo update
+
 # database server for petclinic application
 helm upgrade --install --reset-values \
   --tiller-namespace spc --namespace spc \
