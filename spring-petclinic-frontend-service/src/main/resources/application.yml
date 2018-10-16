@@ -21,3 +21,19 @@ spring:
         url: "http://admin-server:8080"
         instance:
           prefer-ip: true
+
+# Metrics
+management:
+  endpoint:
+    metrics:
+      enabled: true
+    prometheus:
+      enabled: true
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+  metrics:
+    export:
+      prometheus:
+        enabled: true

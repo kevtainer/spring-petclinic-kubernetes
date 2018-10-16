@@ -6,6 +6,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import io.micrometer.core.instrument.MeterRegistry;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,6 +40,9 @@ public class PetResourceTest {
 
     @MockBean
     OwnerRepository ownerRepository;
+
+    @MockBean
+    MeterRegistry registry;
 
     @Test
     public void shouldGetAPetInJSonFormat() throws Exception {

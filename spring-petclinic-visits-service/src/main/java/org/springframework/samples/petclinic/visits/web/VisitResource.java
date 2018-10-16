@@ -15,6 +15,7 @@
  */
 package org.springframework.samples.petclinic.visits.web;
 
+import io.micrometer.core.instrument.MeterRegistry;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.samples.petclinic.visits.model.Visit;
@@ -28,9 +29,11 @@ import java.util.List;
 @Slf4j
 public class VisitResource {
     private final VisitRepository visitRepository;
+    private final MeterRegistry registry;
 
-    public VisitResource(VisitRepository visitRepository) {
+    public VisitResource(VisitRepository visitRepository, MeterRegistry registry) {
         this.visitRepository = visitRepository;
+        this.registry = registry;
     }
 
     @PostMapping("owners/*/pets/{petId}/visits")
@@ -42,6 +45,7 @@ public class VisitResource {
         visit.setPetId(petId);
         log.info("Saving visit {}", visit);
 
+        registry.counter("create.visit").increment();
         visitRepository.save(visit);
     }
 

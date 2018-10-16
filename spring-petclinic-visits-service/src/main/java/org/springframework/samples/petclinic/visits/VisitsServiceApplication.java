@@ -15,6 +15,7 @@
  */
 package org.springframework.samples.petclinic.visits;
 
+import io.jaegertracing.Configuration;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
@@ -24,5 +25,11 @@ import org.springframework.context.annotation.Profile;
 public class VisitsServiceApplication {
     public static void main(String[] args) {
         SpringApplication.run(VisitsServiceApplication.class, args);
+    }
+
+    @Bean
+    @Profile("jaegertracing")
+    public io.opentracing.Tracer getTracer() {
+        return Configuration.fromEnv().getTracer();
     }
 }
