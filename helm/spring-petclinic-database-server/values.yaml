@@ -26,6 +26,19 @@ resources:
     cpu: 100m
 configurationFiles: {}
 initializationFiles: {}
+metrics:
+  enabled: true
+  image: prom/mysqld-exporter
+  imageTag: v0.10.0
+  imagePullPolicy: IfNotPresent
+  resources: {}
+  annotations: {}
+  livenessProbe:
+    initialDelaySeconds: 15
+    timeoutSeconds: 5
+  readinessProbe:
+    initialDelaySeconds: 5
+    timeoutSeconds: 1
 service:
   type: ClusterIP
   port: 3306
@@ -33,4 +46,6 @@ ssl:
   enabled: false
   secret: mysql-ssl-certs
   certificates:
-podAnnotations: {}
+podAnnotations:
+  prometheus.io/scrape: "true"
+  prometheus.io/port: "9104"
