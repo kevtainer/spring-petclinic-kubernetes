@@ -1,4 +1,0 @@
-dependencies:
-  - name: cassandra
-    repository: cassandra
-    condition: provisionDataStore.cassandra

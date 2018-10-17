@@ -4,6 +4,7 @@ target/
 # Eclipse
 .settings/
 .classpath
+.factorypath
 .project
 
 # IntelliJ IDEA

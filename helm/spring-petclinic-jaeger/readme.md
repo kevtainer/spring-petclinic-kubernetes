@@ -1,1 +1,0 @@
-helm install helm/jaeger --name jaeger --values helm/spring-petclinic-jaeger/values.yaml
