@@ -30,6 +30,9 @@
         <spring-cloud.version>Finchley.SR1</spring-cloud.version>
 
         <version.hibernate-enhance-maven-plugin>5.3.7.Final</version.hibernate-enhance-maven-plugin>
+        <version.opentracing-spring-cloud-starter>0.2.0</version.opentracing-spring-cloud-starter>
+        <version.jaeger-client>0.30.2</version.jaeger-client>
+        <version.micrometer>1.0.5</version.micrometer>
 
         <docker.image.prefix>opentracing-workshop/spring-petclinic-kubernetes</docker.image.prefix>
         <docker.image.dockerfile.dir>${basedir}</docker.image.dockerfile.dir>
@@ -88,6 +91,30 @@
                 <version>${version.hibernate-enhance-maven-plugin}</version>
             </dependency>
 
+            <!-- Micormeter core dependency  -->
+            <dependency>
+                <groupId>io.micrometer</groupId>
+                <artifactId>micrometer-core</artifactId>
+                <version>${micrometer.version}</version>
+            </dependency>
+            <!-- Micrometer Prometheus registry  -->
+            <dependency>
+                <groupId>io.micrometer</groupId>
+                <artifactId>micrometer-registry-prometheus</artifactId>
+                <version>${micrometer.version}</version>
+            </dependency>
+            <!-- Jaeger Tracing Client -->
+            <dependency>
+                <groupId>io.jaegertracing</groupId>
+                <artifactId>jaeger-client</artifactId>
+                <version>${version.jaeger-client}</version>
+            </dependency>
+            <!-- Opentracing Spring Cloud Starter -->
+            <dependency>
+                <groupId>io.opentracing.contrib</groupId>
+                <artifactId>opentracing-spring-cloud-starter</artifactId>
+                <version>${version.opentracing-spring-cloud-starter}</version>
+            </dependency>
             <!-- Test Dependencies -->
             <dependency>
                 <groupId>org.assertj</groupId>
