@@ -15,6 +15,7 @@
  */
 package org.springframework.samples.petclinic.visits.web;
 
+import io.micrometer.core.instrument.MeterRegistry;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -32,9 +33,11 @@ import java.util.Optional;
 @Slf4j
 public class VisitResource {
     private final VisitRepository visitRepository;
+    private final MeterRegistry registry;
 
-    public VisitResource(VisitRepository visitRepository) {
+    public VisitResource(VisitRepository visitRepository, MeterRegistry registry) {
         this.visitRepository = visitRepository;
+        this.registry = registry;
     }
 
     @Autowired
@@ -51,6 +54,7 @@ public class VisitResource {
         log.info("Saving visit {}", visit);
 
         Visit savedVisit = visitRepository.save(visit);
+        registry.counter("create.visit").increment();
 
         VisitRecord visitRecord = new VisitRecord(petId, ownerId, savedVisit.getId());
         kafkaTemplate.send("create-visit-record", visitRecord);
