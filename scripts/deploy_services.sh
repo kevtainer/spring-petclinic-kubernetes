@@ -62,11 +62,12 @@ do
     fi
 
     echo
-    echo "Deploying ${service_name} :: ${spc_version} (git ${CI_COMMIT_TAG:-$CI_COMMIT_REF_NAME} $CI_COMMIT_SHA)"
+    echo "Deploying ${image_versioned}\n(git ${CI_COMMIT_TAG:-$CI_COMMIT_REF_NAME} $CI_COMMIT_SHA)"
     set -x
     helm upgrade --install --reset-values \
         --tiller-namespace "$TILLER_NAMESPACE" --namespace "$KUBE_NAMESPACE" \
-        --set="${INGRESS_OVERRIDE}fullnameOverride=${service_name},imageTag=${spc_version}" \
+        --set="${INGRESS_OVERRIDE}fullnameOverride=${service_name}" \
+        --set "image.repository=${image_path},image.tag=${spc_version}" \
         --values helm/spring-petclinic-kubernetes/values.${service_name}.yaml \
         ${service_name} helm/spring-petclinic-kubernetes
     { set +x; } 2>/dev/null
