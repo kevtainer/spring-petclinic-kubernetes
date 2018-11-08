@@ -7,6 +7,8 @@ then
 fi
 
 TEST=$(echo "$HOST" | egrep '^http://[a-z0-9]+')
+export INJECT=${INJECT:-0}
+
 if [ -z "$TEST" ]
 then
     echo "Host must start with http://"
