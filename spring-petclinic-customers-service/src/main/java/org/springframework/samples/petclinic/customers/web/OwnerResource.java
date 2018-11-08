@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.List;
 import java.util.Optional;
+import java.util.Random;
 
 @RequestMapping("/owners")
 @RestController
@@ -49,6 +50,17 @@ class OwnerResource {
      */
     @GetMapping(value = "/{ownerId}")
     public Optional<Owner> findOwner(@PathVariable("ownerId") int ownerId) {
+        Random rn = new Random();
+        int i = rn.nextInt(100);
+
+        // @todo make this a feature flag
+        if (i > 20) {
+            // this aint the lottery
+            log.error("Failed to lookup ownerId: {}", ownerId);
+            throw new InternalError("unknown error occured while looking up ownerId");
+        }
+        System.out.print("The Random Number is " + i);
+
         return ownerRepository.findById(ownerId);
     }
 
