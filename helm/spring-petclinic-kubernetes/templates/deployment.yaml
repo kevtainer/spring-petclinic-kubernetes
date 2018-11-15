@@ -22,15 +22,6 @@ spec:
       containers:
         - name: {{ .Release.Name }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
-{{- if .Values.datadog.enabled }}
-          env:
-            - name: DD_AGENT_SERVICE_HOST
-              valueFrom:
-              fieldRef:
-                fieldPath: status.hostIP
-            - name: DD_AGENT_SERVICE_PORT
-              value: "8126"
-{{- end }}
           {{- with .Values.command }}
           command:
 {{ toYaml . | indent 12 }}

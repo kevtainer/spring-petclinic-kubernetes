@@ -20,9 +20,6 @@ ingress:
   enabled: false
 
 jaeger:
-  enabled: false
-
-datadog:
   enabled: true
 
 resources:
