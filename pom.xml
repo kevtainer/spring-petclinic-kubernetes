@@ -29,7 +29,7 @@
         <java.version>11</java.version>
         <spring-cloud.version>Finchley.SR1</spring-cloud.version>
 
-        <version.hibernate-enhance-maven-plugin>5.2.17.Final</version.hibernate-enhance-maven-plugin>
+        <version.hibernate-enhance-maven-plugin>5.3.7.Final</version.hibernate-enhance-maven-plugin>
 
         <docker.image.prefix>opentracing-workshop/spring-petclinic-kubernetes</docker.image.prefix>
         <docker.image.dockerfile.dir>${basedir}</docker.image.dockerfile.dir>
