@@ -8,4 +8,4 @@ RUN apt-get update && apt-get install -y wget && \
 ARG ARTIFACT_NAME
 ADD ${ARTIFACT_NAME}.jar /app.jar
 
-ENTRYPOINT ["java","-javaagent:/dd-java-agent.jar","-Djava.security.egd=file:/dev/./urandom","-jar","/app.jar"]
+ENTRYPOINT ["java","-javaagent:/dd-java-agent.jar","-Dnet.bytebuddy.experimental=true","-Djava.security.egd=file:/dev/./urandom","-jar","/app.jar"]
