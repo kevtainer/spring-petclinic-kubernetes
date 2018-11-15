@@ -24,7 +24,7 @@ build-artifacts:
     - tags
   script:
     - mvn clean
-    - mvn install
+    - mvn install -DskipTests
     - chmod a+x ./scripts/prepare.sh && ./scripts/prepare.sh
   artifacts:
     paths:
