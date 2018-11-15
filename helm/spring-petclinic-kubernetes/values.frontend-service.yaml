@@ -20,8 +20,11 @@ ingress:
   enabled: false
 
 jaeger:
-  enabled: true
+  enabled: false
 
+datadog:
+  enabled: true
+  
 resources:
   requests:
     cpu: "0.3"
