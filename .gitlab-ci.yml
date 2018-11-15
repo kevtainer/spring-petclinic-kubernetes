@@ -19,7 +19,7 @@ cache:
 
 build-artifacts:
   stage: build
-  image: registry.gitlab.com/opentracing-workshop/build-mvn-jdk10:latest
+  image: registry.gitlab.com/opentracing-workshop/build-mvn-jdk11:latest
   except:
     - tags
   script:
