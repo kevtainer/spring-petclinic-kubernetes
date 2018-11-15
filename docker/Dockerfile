@@ -1,8 +1,9 @@
-FROM openjdk:10.0.2-jre-slim
+FROM openjdk:11-jre-slim
 
 VOLUME /tmp
 
-RUN wget -O /dd-java-agent.jar 'https://search.maven.org/classic/remote_content?g=com.datadoghq&a=dd-java-agent&v=LATEST'
+RUN apt-get update && apt-get install -y wget && \
+  wget -O /dd-java-agent.jar 'https://search.maven.org/classic/remote_content?g=com.datadoghq&a=dd-java-agent&v=LATEST'
 
 ARG ARTIFACT_NAME
 ADD ${ARTIFACT_NAME}.jar /app.jar
