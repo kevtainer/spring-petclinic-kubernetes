@@ -26,7 +26,7 @@
     </modules>
 
     <properties>
-        <java.version>1.10</java.version>
+        <java.version>11</java.version>
         <spring-cloud.version>Finchley.SR1</spring-cloud.version>
 
         <version.hibernate-enhance-maven-plugin>5.2.17.Final</version.hibernate-enhance-maven-plugin>
