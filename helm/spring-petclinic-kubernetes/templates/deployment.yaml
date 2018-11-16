@@ -25,9 +25,9 @@ spec:
 {{- if .Values.datadog.enabled }}
           env:
             - name: DD_AGENT_SERVICE_HOST
-            valueFrom:
-              fieldRef:
-                fieldPath: status.hostIP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.hostIP
             - name: DD_AGENT_SERVICE_PORT
               value: "8126"
 {{- end }}
