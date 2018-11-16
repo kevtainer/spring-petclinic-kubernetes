@@ -24,11 +24,13 @@ spec:
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
 {{- if .Values.datadog.enabled }}
           env:
-            - name: DD_AGENT_SERVICE_HOST
+            - name: DD_SERVICE_NAME
+              value: {{ .Release.Name }}
+            - name: DD_AGENT_HOST
               valueFrom:
                 fieldRef:
                   fieldPath: status.hostIP
-            - name: DD_AGENT_SERVICE_PORT
+            - name: DD_AGENT_PORT
               value: "8126"
 {{- end }}
           {{- with .Values.command }}
