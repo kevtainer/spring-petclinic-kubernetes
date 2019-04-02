@@ -36,14 +36,14 @@ if [ -z "$TILLER_NAMESPACE" ]; then
   fi
 fi
 
-if [ -z "$INGRESS_IP" ]; then
-  echo "No INGRESS_IP environment variable set. Is your repository CI/CD configured properly?"
+if [ -z "$WILDCARD_HOST" ]; then
+  echo "No WILDCARD_HOST environment variable set. Is your repository CI/CD configured properly?"
   exit 1
 fi
 
 echo "Using tiller in namespace $TILLER_NAMESPACE"
 
-WILDCARD_HOST=spc.${INGRESS_IP}.nip.io
+## WILDCARD_HOST=spc.${INGRESS_IP}.nip.io
 SERVICE_PREFIX=spring-petclinic-
 
 for module in "${spc_modules[@]}"
