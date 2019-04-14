@@ -87,5 +87,5 @@ validate-k8s:
     - tags
   script:
     - kubectl get pods
-    - echo "Ingress IP: ${INGRESS_IP:-N/A}"
-    - echo "UCP Hostname: ${UCP_HOSTNAME:-N/A}"
+    - echo Ingress IP: ${INGRESS_IP:-Not set}
+    - echo UCP Hostname: ${UCP_HOSTNAME:-Not set}
