@@ -86,5 +86,5 @@ validate-k8s:
   except:
     - tags
   script:
-    - kubectl version
+    - kubectl get all
     - echo $INGRESS_IP
