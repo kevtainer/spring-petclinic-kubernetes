@@ -1,5 +1,7 @@
 #!/bin/sh
 
+DELAY_MS=15
+
 if [ -z "$HOST" ]
 then
     echo "HOST env not set"
