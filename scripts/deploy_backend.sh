@@ -22,12 +22,21 @@ if [ -z "$TILLER_NAMESPACE" ]; then
   fi
 fi
 
-if [ -z "$WILDCARD_HOST" ]; then
-  echo "No WILDCARD_HOST environment variable set. Is your repository CI/CD configured properly?"
-  exit 1
+if [ ! -z "$INGRESS_IP" ]; then
+  echo "Found INGRESS_IP, generating a nip.io wildcard host"
+  WILDCARD_HOST=${INGRESS_IP}.nip.io
 fi
 
-## WILDCARD_HOST=spc.${INGRESS_IP}.nip.io
+if [ ! -z "$UCP_HOSTNAME" ]; then
+  echo "Found UCP_HOSTNAME, using that as the wildcard host"
+fi
+
+if [ -z "$WILDCARD_HOST" ]; then
+  echo "Unable to find WILDCARD_HOST, did you set the environment variable specific to the platform for this tutorial?"
+  echo "GKE users: INGRESS_IP must be set"
+  echo "Docker EE users: UCP_HOSTNAME must be set"
+  echo "Unable to continue, exiting"
+fi
 
 # ingress rules for petclinic application
 helm upgrade --install --reset-values \
@@ -45,5 +54,3 @@ helm upgrade --install --reset-values \
   --set=fullnameOverride=database-server \
   --values helm/spring-petclinic-database-server/values.yaml \
   database-server stable/mysql
-
-  

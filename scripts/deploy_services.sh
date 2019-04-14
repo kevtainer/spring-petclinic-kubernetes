@@ -36,14 +36,25 @@ if [ -z "$TILLER_NAMESPACE" ]; then
   fi
 fi
 
+if [ ! -z "$INGRESS_IP" ]; then
+  echo "Found INGRESS_IP, generating a nip.io wildcard host"
+  WILDCARD_HOST=spc.${INGRESS_IP}.nip.io
+fi
+
+if [ ! -z "$UCP_HOSTNAME" ]; then
+  echo "Found UCP_HOSTNAME, using that as the wildcard host"
+  WILDCARD_HOST=spc.${UCP_HOSTNAME}
+fi
+
 if [ -z "$WILDCARD_HOST" ]; then
-  echo "No WILDCARD_HOST environment variable set. Is your repository CI/CD configured properly?"
-  exit 1
+  echo "Unable to find WILDCARD_HOST, did you set the environment variable specific to the platform for this tutorial?"
+  echo "GKE users: INGRESS_IP must be set"
+  echo "Docker EE users: UCP_HOSTNAME must be set"
+  echo "Unable to continue, exiting"
 fi
 
 echo "Using tiller in namespace $TILLER_NAMESPACE"
 
-## WILDCARD_HOST=spc.${INGRESS_IP}.nip.io
 SERVICE_PREFIX=spring-petclinic-
 
 for module in "${spc_modules[@]}"
