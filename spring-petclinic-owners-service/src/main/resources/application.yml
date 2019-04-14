@@ -7,8 +7,6 @@ logging.level.org.springframework: INFO
 spring:
   application:
     name: owners-service
-  config:
-    name: configserver
   cloud:
     refresh:
       refreshable: false
