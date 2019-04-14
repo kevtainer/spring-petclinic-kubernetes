@@ -10,8 +10,8 @@ spring:
   config:
     name: configserver
   cloud:
-    config:
-      enabled: false
+    refresh:
+      refreshable: false
   boot:
     admin:
       client:
