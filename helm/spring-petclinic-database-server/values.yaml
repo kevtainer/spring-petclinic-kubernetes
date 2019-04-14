@@ -16,13 +16,8 @@ readinessProbe:
   timeoutSeconds: 1
   successThreshold: 1
   failureThreshold: 3
-## Persist data to a persistent volume
 persistence:
-  enabled: true
-  storageClass: "standard"
-  accessMode: ReadWriteOnce
-  size: 8Gi
-  annotations: {}
+  enabled: false
 resources:
   requests:
     memory: 256Mi
