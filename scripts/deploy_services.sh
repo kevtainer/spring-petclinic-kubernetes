@@ -51,6 +51,7 @@ if [ -z "$WILDCARD_HOST" ]; then
   echo "GKE users: INGRESS_IP must be set"
   echo "Docker EE users: UCP_HOSTNAME must be set"
   echo "Unable to continue, exiting"
+  exit 1
 fi
 
 echo "Using tiller in namespace $TILLER_NAMESPACE"

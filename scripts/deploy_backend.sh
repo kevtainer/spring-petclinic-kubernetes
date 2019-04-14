@@ -29,6 +29,7 @@ fi
 
 if [ ! -z "$UCP_HOSTNAME" ]; then
   echo "Found UCP_HOSTNAME, using that as the wildcard host"
+  WILDCARD_HOST=${UCP_HOSTNAME}
 fi
 
 if [ -z "$WILDCARD_HOST" ]; then
@@ -36,6 +37,7 @@ if [ -z "$WILDCARD_HOST" ]; then
   echo "GKE users: INGRESS_IP must be set"
   echo "Docker EE users: UCP_HOSTNAME must be set"
   echo "Unable to continue, exiting"
+  exit 1
 fi
 
 # ingress rules for petclinic application
