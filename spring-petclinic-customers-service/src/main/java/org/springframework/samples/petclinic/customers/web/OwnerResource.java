@@ -74,6 +74,7 @@ class OwnerResource {
         ownerModel.setCity(ownerRequest.getCity());
         ownerModel.setAddress(ownerRequest.getAddress());
         ownerModel.setTelephone(ownerRequest.getTelephone());
+        ownerModel.setEmail(ownerRequest.getEmail());
         log.info("Saving owner {}", ownerModel);
         return ownerRepository.save(ownerModel);
     }

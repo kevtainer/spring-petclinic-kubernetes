@@ -1,7 +1,25 @@
 #!/bin/bash
 
+PULL_POLICY=Always
+
+if [ -z "$CI_REGISTRY_IMAGE" ]; then
+    echo "warning: using local build parameters"
+    CI_REGISTRY_IMAGE=local-build
+    CI_COMMIT_SHA=local-dirty
+    PULL_POLICY=Never
+fi
+
+GREP_CMD="grep"
+if [ "$(uname)" == "Darwin" ]
+then
+  command -v ggrep >/dev/null 2>&1 || { echo >&2 "OSX requires ggrep but it's not installed.  Please install using homebrew and try again."; exit 1; }
+  GREP_CMD="ggrep"
+fi
+
 if [[ -f ./target/modules.info ]]; then
-    readarray -t spc_modules < ./target/modules.info
+    # readarray doesnt work on osx bash v3
+    #readarray -t spc_modules < ./target/modules.info
+    spc_modules=($(cut -d$'\n' -f1 ./target/modules.info))
 else
     echo "error: modules.info file is missing"
     exit 1
@@ -37,21 +55,22 @@ if [ -z "$TILLER_NAMESPACE" ]; then
 fi
 
 if [ ! -z "$INGRESS_IP" ]; then
-  echo "Found INGRESS_IP, generating a nip.io wildcard host"
-  WILDCARD_HOST=spc.${INGRESS_IP}.nip.io
+  echo "Found INGRESS_IP, generating a nip.io base hostname"
+  BASE_HOSTNAME=spc.${INGRESS_IP}.nip.io
 fi
 
 if [ ! -z "$UCP_HOSTNAME" ]; then
-  echo "Found UCP_HOSTNAME, using that as the wildcard host"
-  WILDCARD_HOST=spc.${UCP_HOSTNAME}
+  echo "Found UCP_HOSTNAME, using that as the base hostname"
+  BASE_HOSTNAME=spc.${UCP_HOSTNAME}
 fi
 
-if [ -z "$WILDCARD_HOST" ]; then
-  echo "Unable to find WILDCARD_HOST, did you set the environment variable specific to the platform for this tutorial?"
+if [ -z "$BASE_HOSTNAME" ]; then
+  echo "Unable to find BASE_HOSTNAME, did you set the environment variable specific to the platform for this tutorial?"
   echo "GKE users: INGRESS_IP must be set"
   echo "Docker EE users: UCP_HOSTNAME must be set"
-  echo "Unable to continue, exiting"
-  exit 1
+  echo ""
+  echo "Defaulting to localhost, goodluck"
+  BASE_HOSTNAME=spc.localhost
 fi
 
 echo "Using tiller in namespace $TILLER_NAMESPACE"
@@ -61,7 +80,7 @@ SERVICE_PREFIX=spring-petclinic-
 for module in "${spc_modules[@]}"
 do
     INGRESS_OVERRIDE=""
-    service_name=$(echo "$module" | grep -oP "^$SERVICE_PREFIX\K.*")
+    service_name=$(echo "$module" | ${GREP_CMD} -oP "^$SERVICE_PREFIX\K.*")
 
     echo "Current release:"
     helm ls --tiller-namespace "$TILLER_NAMESPACE" --namespace "$KUBE_NAMESPACE" ${service_name}
@@ -69,7 +88,7 @@ do
     image_path=${CI_REGISTRY_IMAGE}/${module}
 
     if [[ "$service_name" == "admin-server" ]]; then
-        INGRESS_OVERRIDE="ingress.hosts={admin.${WILDCARD_HOST}},"
+        INGRESS_OVERRIDE="ingress.hosts={admin-${BASE_HOSTNAME}},"
     fi
 
     echo
@@ -78,7 +97,7 @@ do
     helm upgrade --install --reset-values \
         --tiller-namespace "$TILLER_NAMESPACE" --namespace "$KUBE_NAMESPACE" \
         --set="${INGRESS_OVERRIDE}fullnameOverride=${service_name}" \
-        --set "image.repository=${image_path},image.tag=${CI_COMMIT_SHA}" \
+        --set "image.repository=${image_path},image.tag=${CI_COMMIT_SHA:-latest},image.pullPolicy=${PULL_POLICY}" \
         --values helm/spring-petclinic-kubernetes/values.${service_name}.yaml \
         ${service_name} helm/spring-petclinic-kubernetes
     { set +x; } 2>/dev/null

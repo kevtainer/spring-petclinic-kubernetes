@@ -16,6 +16,7 @@
 package org.springframework.samples.petclinic.owners.client;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.netflix.ribbon.RibbonClient;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
@@ -30,8 +31,10 @@ import static java.util.stream.Collectors.groupingBy;
 
 @Component
 @RequiredArgsConstructor
-@RibbonClient(name = "visits-service")
+@RibbonClient(name = "visit-service")
 public class VisitsServiceClient {
+    @Value("${visits-service.url}")
+    private String visitsServiceUrl;
 
     private final RestTemplate loadBalancedRestTemplate;
 
@@ -40,7 +43,7 @@ public class VisitsServiceClient {
         final ParameterizedTypeReference<List<VisitDetails>> responseType = new ParameterizedTypeReference<List<VisitDetails>>() {
         };
         return petIds.parallelStream()
-            .flatMap(petId -> loadBalancedRestTemplate.exchange("http://visits-service:8080/owners/{ownerId}/pets/{petId}/visits", HttpMethod.GET, null,
+            .flatMap(petId -> loadBalancedRestTemplate.exchange(visitsServiceUrl + "/owners/{ownerId}/pets/{petId}/visits", HttpMethod.GET, null,
                 responseType, ownerId, petId).getBody().stream())
             .collect(groupingBy(VisitDetails::getPetId));
     }

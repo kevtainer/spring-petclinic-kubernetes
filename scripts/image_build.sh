@@ -9,7 +9,9 @@ if [ -z "$CI_REGISTRY_IMAGE" ]; then
 fi
 
 if [[ -f ./target/modules.info ]]; then
-    readarray -t spc_modules < ./target/modules.info
+    # readarray doesnt work on osx bash v3
+    #readarray -t spc_modules < ./target/modules.info
+    spc_modules=($(cut -d$'\n' -f1 ./target/modules.info))
 else
     echo "error: modules.info file is missing"
     exit 1

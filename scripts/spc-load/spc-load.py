@@ -27,6 +27,7 @@ class UserBehavior(TaskSet):
                     "city":fake.city(),
                     "firstName":fake.first_name(),
                     "lastName":fake.last_name(),
+                    "email":fake.email(),
                     "telephone": randint(1000000000,9999999999)
                 }
                 owner = self.client.post('/api/customer/owners', json=owner).json()

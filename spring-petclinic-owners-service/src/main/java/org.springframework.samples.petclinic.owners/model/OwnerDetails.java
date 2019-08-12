@@ -38,6 +38,8 @@ public class OwnerDetails {
 
     private String telephone;
 
+    private String email;
+
     private final List<PetDetails> pets = new ArrayList<>();
 
     @JsonIgnore

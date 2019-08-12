@@ -27,6 +27,9 @@ spec:
 {{ toYaml . | indent 12 }}
           {{- end }}
           imagePullPolicy: {{ .Values.image.pullPolicy }}
+          env:
+            - name: SPRING_PROFILES_ACTIVE
+              value: "k8s"
           ports:
             - name: http
               containerPort: {{ .Values.service.port }}

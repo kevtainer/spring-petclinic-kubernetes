@@ -1,4 +1,4 @@
-server.port: 8080
+server.port: 8083
 
 # Logging
 logging.level.org.springframework: INFO
@@ -10,19 +10,14 @@ spring:
   cloud:
     refresh:
       refreshable: false
-  boot:
-    admin:
-      client:
-        auto-deregistration: true
-        url: "http://admin-server:8080"
-        instance:
-          prefer-ip: true
 
 customers-service:
+  url: "http://localhost:8080"
   ribbon:
     eureka:
       enabled: false
 visits-service:
+  url: "http://localhost:8085"
   ribbon:
     eureka:
       enabled: false

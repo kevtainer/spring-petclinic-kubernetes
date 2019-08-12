@@ -2,38 +2,44 @@
 apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
-  name: {{ $fullName }}
+  name: {{ $fullName }}-traefik
   labels:
     app: {{ include "spring-petclinic-ingress-rules.name" . }}
     chart: {{ include "spring-petclinic-ingress-rules.chart" . }}
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
   annotations:
-    kubernetes.io/ingress.class: nginx
-    nginx.ingress.kubernetes.io/rewrite-target: /$1
+    kubernetes.io/ingress.class: traefik
+    traefik.ingress.kubernetes.io/rule-type: PathPrefixStrip
 spec:
+  tls: []
+  #- secretName: spc-tls-cert
   rules:
   {{- range .Values.ingress.hosts }}
     - host: {{ . | quote }}
       http:
         paths:
-        - path: /api/owner/?(.*)
+        - path: /api/notification
+          backend:
+            serviceName: notifications-service
+            servicePort: 8080
+        - path: /api/owner
           backend:
             serviceName: owners-service
             servicePort: 8080
-        - path: /api/visit/?(.*)
+        - path: /api/visit
           backend:
             serviceName: visits-service
             servicePort: 8080
-        - path: /api/customer/?(.*)
+        - path: /api/customer
           backend:
             serviceName: customers-service
             servicePort: 8080
-        - path: /api/vet/?(.*)
+        - path: /api/vet
           backend:
             serviceName: vets-service
             servicePort: 8080
-        - path: /?(.*)
+        - path: /
           backend:
             serviceName: frontend-service
             servicePort: 8080

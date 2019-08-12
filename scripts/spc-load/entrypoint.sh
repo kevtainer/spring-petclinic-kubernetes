@@ -8,7 +8,7 @@ then
     exit 1
 fi
 
-TEST=$(echo "$HOST" | egrep '^http://[a-z0-9]+')
+TEST=$(echo "$HOST" | egrep '^http?s://[a-z0-9]+')
 if [ -z "$TEST" ]
 then
     echo "Host must start with http://"
@@ -25,9 +25,4 @@ fi
 
 echo "Starting load with $CLIENTS clients"
 
-if [ -n "$SILENT" ]
-then
-    locust -f spc-load.py --host "$HOST" --no-web -c $CLIENTS -r 1 > /dev/null 2>&1
-else
-    locust -f spc-load.py --host "$HOST" --no-web -c $CLIENTS -r 1
-fi
+locust -f spc-load.py --host "$HOST" --no-web -c $CLIENTS -r 1

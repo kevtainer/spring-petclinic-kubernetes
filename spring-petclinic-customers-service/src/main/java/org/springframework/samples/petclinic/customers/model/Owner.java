@@ -66,6 +66,10 @@ public class Owner {
     @Digits(fraction = 0, integer = 10)
     private String telephone;
 
+    @Column(name = "email")
+    @NotEmpty
+    private String email;
+
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "owner")
     private Set<Pet> pets;
 
@@ -105,6 +109,14 @@ public class Owner {
         this.city = city;
     }
 
+    public String getEmail() {
+        return this.email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
     public String getTelephone() {
         return this.telephone;
     }
@@ -141,6 +153,7 @@ public class Owner {
             .append("address", this.address)
             .append("city", this.city)
             .append("telephone", this.telephone)
+            .append("email", this.email)
             .toString();
     }
 }

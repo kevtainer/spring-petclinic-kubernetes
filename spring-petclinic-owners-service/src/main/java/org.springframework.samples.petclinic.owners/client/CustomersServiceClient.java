@@ -16,6 +16,7 @@
 package org.springframework.samples.petclinic.owners.client;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.netflix.ribbon.RibbonClient;
 import org.springframework.samples.petclinic.owners.model.OwnerDetails;
 import org.springframework.stereotype.Component;
@@ -25,10 +26,12 @@ import org.springframework.web.client.RestTemplate;
 @RequiredArgsConstructor
 @RibbonClient(name = "customers-service")
 public class CustomersServiceClient {
+    @Value("${customers-service.url}")
+    private String customersServiceUrl;
 
     private final RestTemplate loadBalancedRestTemplate;
 
     public OwnerDetails getOwner(final int ownerId) {
-        return loadBalancedRestTemplate.getForObject("http://customers-service:8080/owners/{ownerId}", OwnerDetails.class, ownerId);
+        return loadBalancedRestTemplate.getForObject(customersServiceUrl + "/owners/{ownerId}", OwnerDetails.class, ownerId);
     }
 }

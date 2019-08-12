@@ -1,0 +1,28 @@
+cp-zookeeper:
+  enabled: true
+  servers: 1
+  persistence:
+    enabled: false
+cp-kafka:
+  enabled: true
+  brokers: 1
+  persistence:
+    enabled: false
+  configurationOverrides:
+    "confluent.metrics.reporter.topic.replicas": 1
+    "offsets.topic.replication.factor": 1
+    "default.replication.factor": 1
+    "min.insync.replicas": 1
+    "auto.create.topics.enable": true
+    "listener.security.protocol.map": |-
+      PLAINTEXT:PLAINTEXT,EXTERNAL:PLAINTEXT
+cp-schema-registry:
+  enabled: false
+cp-kafka-connect:
+  enabled: false
+cp-kafka-rest:
+  enabled: false
+cp-ksql-server:
+  enabled: false
+cp-control-center:
+  enabled: false

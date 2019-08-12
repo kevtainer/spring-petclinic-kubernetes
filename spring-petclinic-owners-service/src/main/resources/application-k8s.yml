@@ -1,0 +1,30 @@
+server.port: 8080
+
+# Logging
+logging.level.org.springframework: INFO
+
+# Spring Config
+spring:
+  application:
+    name: owners-service
+  cloud:
+    refresh:
+      refreshable: false
+  boot:
+    admin:
+      client:
+        auto-deregistration: true
+        url: "http://admin-server:8080"
+        instance:
+          prefer-ip: true
+
+customers-service:
+  url: "http://customers-service:8080"
+  ribbon:
+    eureka:
+      enabled: false
+visits-service:
+  url: "http://visits-service:8080"
+  ribbon:
+    eureka:
+      enabled: false

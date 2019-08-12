@@ -5,7 +5,7 @@
 replicaCount: 1
 
 image:
-  repository: registry.gitlab.com/opentracing-workshop/spring-petclinic-kubernetes/spring-petclinic-visits-service
+  repository: registry.gitlab.com/opentracing-workshop/spring-petclinic-kubernetes/spring-petclinic-visit-service
   tag: latest
   pullPolicy: Always
 

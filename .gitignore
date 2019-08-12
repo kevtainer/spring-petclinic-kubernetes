@@ -16,3 +16,6 @@ target/
 
 # Branch switching
 generated/
+
+# local dev stuff
+.localnotes.txt

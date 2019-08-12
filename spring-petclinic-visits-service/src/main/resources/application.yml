@@ -1,29 +1,27 @@
-server.port: 8080
+server.port: 8085
 
 # Spring Config
 spring:
   application:
-    name: visits-service
-  boot:
-    admin:
-      client:
-        auto-deregistration: true
-        url: "http://admin-server:8080"
-        instance:
-          prefer-ip: true
+    name: visit-service
   cloud:
     refresh:
       refreshable: false
   datasource:
     schema: classpath*:db/mysql/schema.sql
     data: classpath*:db/mysql/data.sql
-    url: jdbc:mysql://database-server:3306/petclinic?useSSL=false
+    url: jdbc:mysql://localhost:3306/petclinic?useSSL=false
     username: root
     password: petclinic
     initialization-mode: ALWAYS
   jpa:
     hibernate:
       ddl-auto: none
+
+kafka:
+  bootstrap:
+    config:
+      server: localhost:9092
 
 # Logging
 logging.level.org.springframework: INFO

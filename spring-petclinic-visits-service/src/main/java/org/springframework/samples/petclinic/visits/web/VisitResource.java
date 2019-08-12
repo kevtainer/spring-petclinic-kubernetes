@@ -16,13 +16,17 @@
 package org.springframework.samples.petclinic.visits.web;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.samples.petclinic.VisitRecord;
 import org.springframework.samples.petclinic.visits.model.Visit;
 import org.springframework.samples.petclinic.visits.model.VisitRepository;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @Slf4j
@@ -33,16 +37,28 @@ public class VisitResource {
         this.visitRepository = visitRepository;
     }
 
-    @PostMapping("owners/*/pets/{petId}/visits")
+    @Autowired
+    private KafkaTemplate<String, VisitRecord> kafkaTemplate;
+
+    @PostMapping("owners/{ownerId}/pets/{petId}/visits")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void create(
         @Valid @RequestBody Visit visit,
-        @PathVariable("petId") int petId) {
+        @PathVariable("petId") int petId,
+        @PathVariable("ownerId") int ownerId) {
 
         visit.setPetId(petId);
         log.info("Saving visit {}", visit);
 
-        visitRepository.save(visit);
+        Visit savedVisit = visitRepository.save(visit);
+
+        VisitRecord visitRecord = new VisitRecord(petId, ownerId, savedVisit.getId());
+        kafkaTemplate.send("create-visit-record", visitRecord);
+    }
+
+    @GetMapping("owners/*/pets/*/visits/{visitId}")
+    public Optional<Visit> visit(@PathVariable("visitId") int visitId) {
+        return visitRepository.findById(visitId);
     }
 
     @GetMapping("owners/*/pets/{petId}/visits")

@@ -22,37 +22,54 @@ if [ -z "$TILLER_NAMESPACE" ]; then
   fi
 fi
 
+_helm() {
+    echo "> helm $@\
+"
+    helm $@
+}
+
 if [ ! -z "$INGRESS_IP" ]; then
   echo "Found INGRESS_IP, generating a nip.io wildcard host"
-  WILDCARD_HOST=${INGRESS_IP}.nip.io
+  BASE_HOSTNAME=${INGRESS_IP}.nip.io
 fi
 
 if [ ! -z "$UCP_HOSTNAME" ]; then
   echo "Found UCP_HOSTNAME, using that as the wildcard host"
-  WILDCARD_HOST=${UCP_HOSTNAME}
+  BASE_HOSTNAME=${UCP_HOSTNAME}
 fi
 
-if [ -z "$WILDCARD_HOST" ]; then
-  echo "Unable to find WILDCARD_HOST, did you set the environment variable specific to the platform for this tutorial?"
-  echo "GKE users: INGRESS_IP must be set"
-  echo "Docker EE users: UCP_HOSTNAME must be set"
-  echo "Unable to continue, exiting"
-  exit 1
+if [ -z "$BASE_HOSTNAME" ]; then
+  echo "Unable to find $BASE_HOSTNAME, did you set the environment variable specific to the platform for this tutorial?"
+  echo "Setting as localhost. Good luck"
+  BASE_HOSTNAME="localhost"
 fi
+
+# generate ssl cert for teh ingress
+openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout tls.key -out tls.crt -subj "/CN=spc.${BASE_HOSTNAME}"
+kubectl -n spc create secret tls spc-tls-cert --key=tls.key --cert=tls.crt
+rm -rf tls.key tls.crt
 
 # ingress rules for petclinic application
-helm upgrade --install --reset-values \
+_helm upgrade --install --reset-values \
   --tiller-namespace ${TILLER_NAMESPACE} --namespace ${KUBE_NAMESPACE} \
-  --set ingress.hosts={spc.${WILDCARD_HOST}} \
+  --set ingress.hosts={spc.${BASE_HOSTNAME}} \
   --values helm/spring-petclinic-ingress-rules/values.yaml \
   spc-ingress-rules helm/spring-petclinic-ingress-rules
 
 # get stable repo
-helm repo update
+_helm repo update
 
 # database server for petclinic application
-helm upgrade --install --reset-values \
-  --tiller-namespace spc --namespace spc \
+_helm upgrade --install --reset-values \
+  --tiller-namespace ${TILLER_NAMESPACE} --namespace ${KUBE_NAMESPACE} \
   --set=fullnameOverride=database-server \
   --values helm/spring-petclinic-database-server/values.yaml \
   database-server stable/mysql
+
+# install kafka (using local repo because their hosted chart breaks storage on single node installs as of 8/8/19)
+_helm upgrade --install \
+  --tiller-namespace ${TILLER_NAMESPACE} --namespace ${KUBE_NAMESPACE} \
+  --values helm/spring-petclinic-kafka-server/values.yaml \
+  kafka-oss helm/cp-helm-charts
+
+

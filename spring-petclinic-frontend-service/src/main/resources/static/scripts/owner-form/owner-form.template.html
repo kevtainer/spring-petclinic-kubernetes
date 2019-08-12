@@ -32,6 +32,12 @@
     </div>
     
     <div class="form-group">
+        <label>Email</label>
+        <input class="form-control" ng-model="$ctrl.owner.email" name="email" required/>
+        <span ng-show="ownerForm.email.$error.required" class="help-block">Email is required.</span>
+    </div>
+    
+    <div class="form-group">
         <button class="btn btn-default" type="submit">Submit</button>
     </div>
 </form>
