@@ -73,6 +73,6 @@ _helm upgrade --install --reset-values \
 _helm upgrade --install \
   --tiller-namespace ${TILLER_NAMESPACE} --namespace ${KUBE_NAMESPACE} \
   --values helm/spring-petclinic-kafka-server/values.yaml \
-  kafka-oss helm/cp-helm-charts
+  kafka-oss ../helm/cp-helm-charts
 
 

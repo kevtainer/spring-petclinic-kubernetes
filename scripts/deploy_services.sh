@@ -17,9 +17,11 @@ then
 fi
 
 if [[ -f ./target/modules.info ]]; then
-    # readarray doesnt work on osx bash v3
-    #readarray -t spc_modules < ./target/modules.info
+  if [ "$(uname)" == "Darwin" ]; then
     spc_modules=($(cut -d$'\n' -f1 ./target/modules.info))
+  else
+    readarray -t spc_modules < ./target/modules.info
+  fi
 else
     echo "error: modules.info file is missing"
     exit 1
