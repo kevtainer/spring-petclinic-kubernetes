@@ -56,12 +56,12 @@ fi
 
 if [ ! -z "$INGRESS_IP" ]; then
   echo "Found INGRESS_IP, generating a nip.io base hostname"
-  BASE_HOSTNAME=spc.${INGRESS_IP}.nip.io
+  BASE_HOSTNAME=${INGRESS_IP}.nip.io
 fi
 
 if [ ! -z "$UCP_HOSTNAME" ]; then
   echo "Found UCP_HOSTNAME, using that as the base hostname"
-  BASE_HOSTNAME=spc.${UCP_HOSTNAME}
+  BASE_HOSTNAME=${UCP_HOSTNAME}
 fi
 
 if [ -z "$BASE_HOSTNAME" ]; then
@@ -70,7 +70,7 @@ if [ -z "$BASE_HOSTNAME" ]; then
   echo "Docker EE users: UCP_HOSTNAME must be set"
   echo ""
   echo "Defaulting to localhost, goodluck"
-  BASE_HOSTNAME=spc.localhost
+  BASE_HOSTNAME=localhost
 fi
 
 echo "Using tiller in namespace $TILLER_NAMESPACE"
@@ -88,7 +88,7 @@ do
     image_path=${CI_REGISTRY_IMAGE}/${module}
 
     if [[ "$service_name" == "admin-server" ]]; then
-        INGRESS_OVERRIDE="ingress.hosts={admin-${BASE_HOSTNAME}},"
+        INGRESS_OVERRIDE="ingress.hosts={admin.${BASE_HOSTNAME}},"
     fi
 
     echo
@@ -96,7 +96,7 @@ do
     set -x
     helm upgrade --install --reset-values \
         --tiller-namespace "$TILLER_NAMESPACE" --namespace "$KUBE_NAMESPACE" \
-        --set="${INGRESS_OVERRIDE}fullnameOverride=${service_name}" \
+        --set "${INGRESS_OVERRIDE}fullnameOverride=${service_name}" \
         --set "image.repository=${image_path},image.tag=${CI_COMMIT_SHA:-latest},image.pullPolicy=${PULL_POLICY}" \
         --values helm/spring-petclinic-kubernetes/values.${service_name}.yaml \
         ${service_name} helm/spring-petclinic-kubernetes

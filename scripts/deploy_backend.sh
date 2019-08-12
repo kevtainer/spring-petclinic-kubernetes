@@ -39,17 +39,20 @@ if [ ! -z "$UCP_HOSTNAME" ]; then
 fi
 
 if [ -z "$BASE_HOSTNAME" ]; then
-  echo "Unable to find $BASE_HOSTNAME, did you set the environment variable specific to the platform for this tutorial?"
-  echo "Setting as localhost. Good luck"
-  BASE_HOSTNAME="localhost"
+  echo "Unable to find BASE_HOSTNAME, did you set the environment variable specific to the platform for this tutorial?"
+  echo "GKE users: INGRESS_IP must be set"
+  echo "Docker EE users: UCP_HOSTNAME must be set"
+  echo ""
+  echo "Defaulting to localhost, goodluck"
+  BASE_HOSTNAME=localhost
 fi
 
-# generate ssl cert for teh ingress
-openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout tls.key -out tls.crt -subj "/CN=spc.${BASE_HOSTNAME}"
-kubectl -n spc create secret tls spc-tls-cert --key=tls.key --cert=tls.crt
-rm -rf tls.key tls.crt
+# generate ssl cert for teh ingress (not very useful, so it's commented out)
+#openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout tls.key -out tls.crt -subj "/CN=*.${BASE_HOSTNAME}"
+#kubectl -n spc create secret tls spc-tls-cert --key=tls.key --cert=tls.crt
+#rm -rf tls.key tls.crt
 
-# ingress rules for petclinic application
+# ingress rules for petclinic application @todo move this to the actual app helm template (if possible)
 _helm upgrade --install --reset-values \
   --tiller-namespace ${TILLER_NAMESPACE} --namespace ${KUBE_NAMESPACE} \
   --set ingress.hosts={spc.${BASE_HOSTNAME}} \
