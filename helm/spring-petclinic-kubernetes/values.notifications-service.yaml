@@ -21,7 +21,7 @@ jaeger:
 
 resources:
   requests:
-    cpu: "0.3"
+    cpu: "0.1"
     memory: "800Mi"
   limits:
     cpu: "1"
