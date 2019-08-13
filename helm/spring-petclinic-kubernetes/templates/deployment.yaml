@@ -29,7 +29,7 @@ spec:
           env:
             {{- if .Values.jaeger.enabled }}
             - name: SPRING_PROFILES_ACTIVE
-              value: "jaegertracing"
+              value: "jaegertracing,k8s"
             - name: JAEGER_ENDPOINT
               value: "http://jaeger-collector.default.svc.cluster.local:14268/api/traces"
             - name: JAEGER_SAMPLER_TYPE
@@ -40,11 +40,11 @@ spec:
               value: "false"
             - name: JAEGER_SERVICE_NAME
               value: {{ .Release.Name }}
-            {{- end }}
-          imagePullPolicy: {{ .Values.image.pullPolicy }}
-          env:
+            {{- else }}
             - name: SPRING_PROFILES_ACTIVE
               value: "k8s"
+            {{- end }}
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
             - name: http
               containerPort: {{ .Values.service.port }}
