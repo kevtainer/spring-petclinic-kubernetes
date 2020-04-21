@@ -1,0 +1,55 @@
+image:
+  name: traefik
+  tag: 2.2.0
+deployment:
+  enabled: true
+  replicas: 1
+  annotations: {}
+  podAnnotations: {}
+ingressRoute:
+  dashboard:
+    enabled: true
+rollingUpdate:
+  maxUnavailable: 1
+  maxSurge: 1
+volumes: []
+globalArguments:
+  - "--accesslog=true"
+  - "--log.level=debug"
+  - "--global.checknewversion"
+  - "--global.sendanonymoususage"
+additionalArguments: []
+env: []
+ports:
+  traefik:
+    port: 9000
+    expose: false
+    exposedPort: 9000
+  web:
+    port: 8000
+    expose: true
+    exposedPort: 80
+  websecure:
+    port: 8443
+    expose: true
+    exposedPort: 443
+service:
+  enabled: true
+  type: LoadBalancer
+  annotations: {}
+  spec: {}
+  loadBalancerSourceRanges: []
+autoscaling:
+  enabled: false
+persistence:
+  enabled: false
+  accessMode: ReadWriteOnce
+  size: 128Mi
+  path: /data
+  annotations: {}
+hostNetwork: false
+serviceAccountAnnotations: {}
+resources: {}
+affinity: {}
+nodeSelector: {}
+tolerations: []

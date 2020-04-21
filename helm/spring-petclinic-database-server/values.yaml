@@ -2,8 +2,8 @@ image: "mysql"
 imageTag: "5.7.14"
 mysqlRootPassword: petclinic
 mysqlDatabase: petclinic
-mysqlUser: instana_mod
-mysqlPassword: yourface
+#mysqlUser: instana_mod
+#mysqlPassword: yourface
 imagePullPolicy: IfNotPresent
 nodeSelector: {}
 livenessProbe:

@@ -5,30 +5,30 @@
 replicaCount: 1
 
 image:
-  repository: registry.gitlab.com/opentracing-workshop/spring-petclinic-kubernetes/spring-petclinic-owners-service
+  repository: busybox
   tag: latest
-  pullPolicy: Always
+  pullPolicy: IfNotPresent
 
 nameOverride: ""
 fullnameOverride: ""
 
+env: {}
+
 service:
   type: ClusterIP
-  port: 8080
+  port: 80
 
 ingress:
   enabled: false
-
-jaeger:
-  enabled: true
+  rules: []
 
 resources:
   requests:
-    cpu: "0.1"
-    memory: "1Gi"
+    cpu: ".25"
+    memory: "64Mi"
   limits:
     cpu: "1"
-    memory: "1Gi"
+    memory: "128Mi"
 nodeSelector: {}
 tolerations: []
 affinity: {}

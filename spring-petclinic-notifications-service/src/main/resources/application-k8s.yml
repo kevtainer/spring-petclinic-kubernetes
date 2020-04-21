@@ -1,4 +1,4 @@
-server.port: 8080
+server.port: 80
 
 # Logging
 logging.level.org.springframework: INFO
@@ -14,7 +14,7 @@ spring:
     admin:
       client:
         auto-deregistration: true
-        url: "http://admin-server:8080"
+        url: "http://admin-server.local.maesh"
         instance:
           prefer-ip: true
 
@@ -24,12 +24,12 @@ kafka:
       server: kafka-oss-cp-kafka-headless:9092
 
 customers-service:
-  url: "http://customers-service:8080"
+  url: "http://customers-service.local.maesh"
   ribbon:
     eureka:
       enabled: false
 visits-service:
-  url: "http://visits-service:8080"
+  url: "http://visits-service.local.maesh"
   ribbon:
     eureka:
       enabled: false
