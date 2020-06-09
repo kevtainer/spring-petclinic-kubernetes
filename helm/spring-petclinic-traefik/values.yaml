@@ -1,55 +1,74 @@
-image:
-  name: traefik
-  tag: 2.2.0
-deployment:
+localPersistance:
   enabled: true
-  replicas: 1
-  annotations: {}
-  podAnnotations: {}
-ingressRoute:
-  dashboard:
+
+traefik:
+  deploy: true
+  image:
+    name: traefik
+    tag: 2.2.0
+  deployment:
     enabled: true
-rollingUpdate:
-  maxUnavailable: 1
-  maxSurge: 1
-volumes: []
-globalArguments:
-  - "--accesslog=true"
-  - "--log.level=debug"
-  - "--global.checknewversion"
-  - "--global.sendanonymoususage"
-additionalArguments: []
-env: []
-ports:
-  traefik:
-    port: 9000
-    expose: false
-    exposedPort: 9000
-  web:
-    port: 8000
-    expose: true
-    exposedPort: 80
-  websecure:
-    port: 8443
-    expose: true
-    exposedPort: 443
-service:
-  enabled: true
-  type: LoadBalancer
-  annotations: {}
-  spec: {}
-  loadBalancerSourceRanges: []
-autoscaling:
-  enabled: false
-persistence:
-  enabled: false
-  accessMode: ReadWriteOnce
-  size: 128Mi
-  path: /data
-  annotations: {}
-hostNetwork: false
-serviceAccountAnnotations: {}
-resources: {}
-affinity: {}
-nodeSelector: {}
-tolerations: []
+    replicas: 1
+    annotations: {}
+    podAnnotations:
+      prometheus.io/port: "8082"
+      prometheus.io/scrape: "true"
+  ingressRoute:
+    dashboard:
+      enabled: true
+  rollingUpdate:
+    maxUnavailable: 1
+    maxSurge: 1
+  volumes: []
+  globalArguments:
+    - "--global.checknewversion"
+    - "--global.sendanonymoususage"
+  additionalArguments:
+    - "--certificatesresolvers.acmeresolver.acme.httpchallenge.entrypoint=web"
+    - "--certificatesresolvers.acmeresolver.acme.email=kevin.crawley@containo.us"
+    - "--certificatesresolvers.acmeresolver.acme.storage=/data/acme.json"
+    #- "--certificatesresolvers.acmeresolver.acme.caserver=https://acme-staging-v02.api.letsencrypt.org/directory"
+    - "--tracing.jaeger.localagenthostport=jaeger-agent.default.svc.cluster.local:6831"
+    - "--tracing.jaeger.samplingserverurl=http://jaeger-agent.default.svc.cluster.local:5778/sampling"
+    - "--metrics.prometheus"
+    - "--metrics.prometheus.entrypoint=metrics"
+    - "--entrypoints.metrics.address=:8082"
+  env: []
+  ports:
+    metrics:
+      port: 8082
+      expose: true
+      exposedPort: 8082
+    traefik:
+      port: 9000
+      expose: false
+      exposedPort: 9000
+    web:
+      port: 8000
+      expose: true
+      exposedPort: 80
+    websecure:
+      port: 8443
+      expose: true
+      exposedPort: 443
+  service:
+    enabled: true
+    type: LoadBalancer
+    annotations: {}
+    spec: {}
+    loadBalancerSourceRanges: []
+  autoscaling:
+    enabled: false
+  persistence:
+    enabled: true
+    accessMode: ReadWriteOnce
+    size: 128Mi
+    path: /data
+    storageClass: local-storage
+    annotations: {}
+  hostNetwork: false
+  serviceAccountAnnotations: {}
+  resources: {}
+  affinity: {}
+  nodeSelector: {}
+  tolerations: []

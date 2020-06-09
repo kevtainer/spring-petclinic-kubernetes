@@ -1,0 +1,13 @@
+{{- if .Values.ingress.enabled -}}
+{{- $fullName := include "spring-petclinic-kubernetes.fullname" . -}}
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: Middleware
+metadata:
+  name: redirect-{{ $fullName }}
+spec:
+  redirectScheme:
+    scheme: https
+    permanent: true
+    port: "443"
+{{- end }}

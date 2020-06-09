@@ -1,0 +1,23 @@
+{{- if .Values.localPersistance.enabled -}}
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: traefik-storage-pv
+spec:
+  capacity:
+    storage: 1Gi
+  accessModes:
+  - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: local-storage
+  local:
+    path: /files
+  nodeAffinity:
+    required:
+      nodeSelectorTerms:
+      - matchExpressions:
+        - key: kubernetes.io/hostname
+          operator: In
+          values:
+          - petclinic-worker
+{{- end }}

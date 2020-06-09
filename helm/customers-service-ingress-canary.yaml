@@ -1,0 +1,31 @@
+# Source: spring-petclinic-kubernetes/templates/ingress-tls.yaml
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: customers-service-tls
+  labels:
+    app: spring-petclinic-kubernetes
+    chart: spring-petclinic-kubernetes-0.1.0
+    release: customers-service
+    heritage: Helm
+spec:
+  entryPoints:
+  - websecure
+  routes:
+  - match: Host(`spc.kevincrawley.io`) && PathPrefix(`/api/customer`)
+    kind: Rule
+    services:
+    - name: customers-service-v1
+      port: 80
+      weight: 3
+    - name: customers-service-v2
+      port: 80
+      weight: 1
+    middlewares:
+      - name: strip-customers-service
+  tls:
+    certResolver: acmeresolver
+    domains:
+    - main: spc.kevincrawley.io
+      sans:
+      - spc-admin.kevincrawley.io

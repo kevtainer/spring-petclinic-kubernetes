@@ -14,9 +14,21 @@ fullnameOverride: ""
 
 env: {}
 
+deployment:
+  enabled: true
+
 service:
+  enabled: true
   type: ClusterIP
   port: 80
+
+jaeger:
+  enabled: false
+
+canary:
+  enabled: false
+  serviceA: ""
+  serviceB: ""
 
 ingress:
   enabled: false

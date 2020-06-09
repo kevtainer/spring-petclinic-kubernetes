@@ -20,9 +20,17 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Profile;
 
+import io.jaegertracing.Configuration;
+
 @SpringBootApplication
 public class VisitsServiceApplication {
     public static void main(String[] args) {
         SpringApplication.run(VisitsServiceApplication.class, args);
+    }
+
+    @Bean
+    @Profile("jaegertracing")
+    public io.opentracing.Tracer getTracer() {
+        return Configuration.fromEnv().getTracer();
     }
 }

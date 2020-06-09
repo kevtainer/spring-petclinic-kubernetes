@@ -1,3 +1,4 @@
+{{- if .Values.deployment.enabled -}}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -28,8 +29,27 @@ spec:
           {{- end }}
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           env:
+            {{- if .Values.jaeger.enabled }}
+            - name: SPRING_PROFILES_ACTIVE
+              value: "jaegertracing,k8s"
+            - name: JAEGER_ENDPOINT
+              value: "http://jaeger-collector.default.svc.cluster.local:14268/api/traces"
+            - name: JAEGER_SAMPLER_TYPE
+              value: "const"
+            - name: JAEGER_SAMPLER_PARAM
+              value: "1"
+            - name: JAEGER_REPORTER_LOG_SPANS
+              value: "true"
+            - name: JAEGER_SERVICE_NAME
+              value: {{ .Release.Name }}
+            {{- else }}
             - name: SPRING_PROFILES_ACTIVE
               value: "k8s"
+            {{- end }}
+            {{- range $key, $value := .Values.env }}
+            - name: {{ $key | quote }}
+              value: {{ tpl $value $ | quote }}
+            {{- end }}
           ports:
             - name: http
               containerPort: {{ .Values.service.port }}
@@ -62,3 +82,4 @@ spec:
       tolerations:
 {{ toYaml . | indent 8 }}
     {{- end }}
+{{- end }}

@@ -1,0 +1,10 @@
+---
+apiVersion: v2
+name: spring-petclinic-traefik
+version: 1.0.0
+appVersion: v1.0.0
+description: Traefik shim for local PVC support - DO NOT USE
+dependencies:
+  - name: traefik
+    version: 8.2.0
+    condition: traefik.deploy

@@ -1,9 +1,10 @@
 {{- if .Values.ingress.enabled -}}
 {{- $fullName := include "spring-petclinic-kubernetes.fullname" . -}}
+{{- $canary := .Values.canary -}}
 apiVersion: traefik.containo.us/v1alpha1
 kind: IngressRoute
 metadata:
-  name: {{ $fullName }}
+  name: {{ $fullName }}-tls
   labels:
     app: {{ include "spring-petclinic-kubernetes.name" . }}
     chart: {{ include "spring-petclinic-kubernetes.chart" . }}
@@ -15,7 +16,6 @@ metadata:
 {{- end }}
 spec:
   entryPoints:
-  - web
   - websecure
   routes:
   {{- range .Values.ingress.rules }}
@@ -23,8 +23,17 @@ spec:
   - match: Host(`{{ .host }}`) && PathPrefix(`{{ .stripPrefix }}`)
     kind: Rule
     services:
+{{- if $canary.enabled }}
+    - name: {{ $canary.serviceA }}
+      port: 80
+      weight: 3
+    - name: {{ $canary.serviceB }}
+      port: 80
+      weight: 1
+{{- else }}
     - name: {{ $fullName }}
       port: 80
+{{- end }}
     middlewares:
       - name: strip-{{ $fullName }}
   {{- end }}
@@ -37,19 +46,13 @@ spec:
   {{- end }}
   {{- end }}
   tls:
-    store:
-      name: default
-{{- range .Values.ingress.rules }}
-{{- if .stripPrefix }}
----
-apiVersion: traefik.containo.us/v1alpha1
-kind: Middleware
-metadata:
-  name: strip-{{ $fullName }}
-spec:
-  stripPrefix:
-    prefixes:
-      - {{ .stripPrefix }}
+    certResolver: acmeresolver
+    {{- if .Values.ingress.domainMain }}
+    domains:
+    - main: {{ .Values.ingress.domainMain }}
+{{- with .Values.ingress.domainSans }}
+      sans:
+{{ toYaml . | indent 6 }}
 {{- end }}
 {{- end }}
 {{- end }}

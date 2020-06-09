@@ -1,0 +1,41 @@
+{{- if .Values.ingress.enabled -}}
+{{- $fullName := include "spring-petclinic-kubernetes.fullname" . -}}
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: {{ $fullName }}-notls
+  labels:
+    app: {{ include "spring-petclinic-kubernetes.name" . }}
+    chart: {{ include "spring-petclinic-kubernetes.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+{{- with .Values.ingress.annotations }}
+  annotations:
+{{ toYaml . | indent 4 }}
+{{- end }}
+spec:
+  entryPoints:
+  - web
+  routes:
+  {{- range .Values.ingress.rules }}
+  {{- if .stripPrefix }}
+  - match: Host(`{{ .host }}`) && PathPrefix(`{{ .stripPrefix }}`)
+    kind: Rule
+    services:
+    - name: {{ $fullName }}
+      port: 80
+    middlewares:
+      - name: strip-{{ $fullName }}
+      - name: redirect-{{ $fullName }}
+  {{- end }}
+  {{- if .noPrefix }}
+  - match: Host(`{{ .host }}`)
+    kind: Rule
+    services:
+    - name: {{ $fullName }}
+      port: 80
+    middlewares:
+      - name: redirect-{{ $fullName }}
+  {{- end }}
+  {{- end }}
+{{- end }}

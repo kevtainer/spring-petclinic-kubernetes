@@ -75,7 +75,11 @@ class PetResource {
     }
 
     @GetMapping("owners/*/pets/{petId}")
-    public PetDetails findPet(@PathVariable("petId") int petId) {
+    public PetDetails findPet(@PathVariable("petId") int petId) throws RuntimeException {
+        
+        if (System.getenv("THROW_EX") != null && System.getenv("THROW_EX").equals("on")) {
+            throw new RuntimeException("induced failure... abort!");
+        }
         return new PetDetails(findPetById(petId));
     }
 

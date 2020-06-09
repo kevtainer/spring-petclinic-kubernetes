@@ -1,0 +1,6 @@
+
+ingress:
+  domainMain: null
+  grafana: noop
+  prometheus: noop
+  jaeger: noop

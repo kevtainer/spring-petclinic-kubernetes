@@ -1,0 +1,25 @@
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: prometheus-tls
+  labels:
+    app: prometheus
+spec:
+  entryPoints:
+  - websecure
+  routes:
+  - match: Host(`{{ .Values.ingress.prometheus }}`)
+    kind: Rule
+    services:
+    - name: prometheus
+      port: 9090
+  tls:
+    certResolver: acmeresolver
+    {{- if .Values.ingress.domainMain }}
+    domains:
+    - main: {{ .Values.ingress.domainMain }}
+{{- with .Values.ingress.domainSans }}
+      sans:
+{{ toYaml . | indent 6 }}
+{{- end }}
+{{- end }}

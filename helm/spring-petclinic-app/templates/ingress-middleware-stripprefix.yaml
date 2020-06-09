@@ -1,0 +1,16 @@
+{{- if .Values.ingress.enabled -}}
+{{- $fullName := include "spring-petclinic-kubernetes.fullname" . -}}
+{{- range .Values.ingress.rules }}
+{{- if .stripPrefix }}
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: Middleware
+metadata:
+  name: strip-{{ $fullName }}
+spec:
+  stripPrefix:
+    prefixes:
+      - {{ .stripPrefix }}
+{{- end }}
+{{- end }}
+{{- end }}

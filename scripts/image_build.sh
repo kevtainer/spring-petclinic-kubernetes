@@ -5,10 +5,12 @@ set -e
 if [ -z "$CI_REGISTRY_IMAGE" ]; then
     echo "warning: \$CI_REGISTRY_IMAGE is unset"
     CI_REGISTRY_IMAGE=local-build
-    CI_COMMIT_SHA=local-dirty
+    CI_COMMIT_SHA=${2:-local-dirty}
 fi
 
-if [[ -f ./target/modules.info ]]; then
+if [ ! -z "$1" ]; then
+  spc_modules=($1)
+elif [[ -f ./target/modules.info ]]; then
   if [ "$(uname)" == "Darwin" ]; then
     spc_modules=($(cut -d$'\n' -f1 ./target/modules.info))
   else

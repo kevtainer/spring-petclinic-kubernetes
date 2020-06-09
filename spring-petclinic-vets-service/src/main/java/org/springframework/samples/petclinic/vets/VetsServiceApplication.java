@@ -22,11 +22,21 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Profile;
 import org.springframework.samples.petclinic.vets.system.VetsProperties;
 
+import io.jaegertracing.Configuration;
+
 @SpringBootApplication
 @EnableConfigurationProperties(VetsProperties.class)
 public class VetsServiceApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(VetsServiceApplication.class, args);
+	
 	}
+	
+	@Bean
+    @Profile("jaegertracing")
+    public io.opentracing.Tracer getTracer() {
+        return Configuration.fromEnv().getTracer();
+    }
+
 }

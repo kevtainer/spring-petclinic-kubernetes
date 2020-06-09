@@ -24,7 +24,7 @@ customers-service:
     eureka:
       enabled: false
 visits-service:
-  url: "http://visits-service.local.maesh"
+  url: "http://visits-service"
   ribbon:
     eureka:
       enabled: false

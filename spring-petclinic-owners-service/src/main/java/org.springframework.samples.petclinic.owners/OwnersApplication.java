@@ -22,6 +22,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Profile;
 import org.springframework.web.client.RestTemplate;
 
+import io.jaegertracing.Configuration;
+
 @SpringBootApplication
 public class OwnersApplication {
 
@@ -33,5 +35,11 @@ public class OwnersApplication {
     @LoadBalanced
     RestTemplate loadBalancedRestTemplate() {
         return new RestTemplate();
+    }
+    
+	@Bean
+    @Profile("jaegertracing")
+    public io.opentracing.Tracer getTracer() {
+        return Configuration.fromEnv().getTracer();
     }
 }

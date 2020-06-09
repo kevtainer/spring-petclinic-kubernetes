@@ -1,0 +1,140 @@
+# Source: spring-petclinic-kubernetes/templates/service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: customers-service
+  annotations:
+    maesh.containo.us/traffic-type: "http"
+  labels:
+    app: spring-petclinic-kubernetes
+    chart: spring-petclinic-kubernetes-0.1.0
+    spring-boot: "true"
+    release: customers-service
+    heritage: Helm
+spec:
+  type: ClusterIP
+  ports:
+    - port: 80
+      targetPort: 80
+      protocol: TCP
+      name: http
+  selector:
+    app: spring-petclinic-kubernetes
+    release: customers-service
+---
+# Source: spring-petclinic-kubernetes/templates/deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: customers-service
+  labels:
+    app: spring-petclinic-kubernetes
+    chart: spring-petclinic-kubernetes-0.1.0
+    release: customers-service
+    heritage: Helm
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: spring-petclinic-kubernetes
+      release: customers-service
+  template:
+    metadata:
+      labels:
+        app: spring-petclinic-kubernetes
+        release: customers-service
+    spec:
+      containers:
+        - name: customers-service
+          image: "local-build/spring-petclinic-customers-service:c5f01f72c1ab7bf7473625496238ca"
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: SPRING_PROFILES_ACTIVE
+              value: "jaegertracing,k8s"
+            - name: JAEGER_ENDPOINT
+              value: "http://jaeger-collector.default.svc.cluster.local:14268/api/traces"
+            - name: JAEGER_SAMPLER_TYPE
+              value: "const"
+            - name: JAEGER_SAMPLER_PARAM
+              value: "1"
+            - name: JAEGER_REPORTER_LOG_SPANS
+              value: "true"
+            - name: JAEGER_SERVICE_NAME
+              value: customers-service
+          ports:
+            - name: http
+              containerPort: 80
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /actuator/health
+              port: http
+            initialDelaySeconds: 120
+            timeoutSeconds: 30
+            failureThreshold: 10
+          readinessProbe:
+            httpGet:
+              path: /actuator/health
+              port: http
+            initialDelaySeconds: 5
+            timeoutSeconds: 5
+            failureThreshold: 10
+          resources:
+            limits:
+              cpu: "1"
+              memory: 128Mi
+            requests:
+              cpu: ".25"
+              memory: 64Mi
+---
+# Source: spring-petclinic-kubernetes/templates/ingress-notls.yaml
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: customers-service-notls
+  labels:
+    app: spring-petclinic-kubernetes
+    chart: spring-petclinic-kubernetes-0.1.0
+    release: customers-service
+    heritage: Helm
+spec:
+  entryPoints:
+  - web
+  routes:
+  - match: Host(`spc.kevincrawley.io`) && PathPrefix(`/api/customer`)
+    kind: Rule
+    services:
+    - name: customers-service
+      port: 80
+    middlewares:
+      - name: strip-customers-service
+      - name: redirect-customers-service
+---
+# Source: spring-petclinic-kubernetes/templates/ingress-tls.yaml
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: customers-service-tls
+  labels:
+    app: spring-petclinic-kubernetes
+    chart: spring-petclinic-kubernetes-0.1.0
+    release: customers-service
+    heritage: Helm
+spec:
+  entryPoints:
+  - websecure
+  routes:
+  - match: Host(`spc.kevincrawley.io`) && PathPrefix(`/api/customer`)
+    kind: Rule
+    services:
+    - name: customers-service
+      port: 80
+    middlewares:
+      - name: strip-customers-service
+  tls:
+    certResolver: acmeresolver
+    domains:
+    - main: spc.kevincrawley.io
+      sans:
+      - spc-admin.kevincrawley.io
+---

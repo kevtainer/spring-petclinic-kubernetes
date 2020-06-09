@@ -105,6 +105,18 @@
             <artifactId>spring-kafka-test</artifactId>
             <scope>test</scope>
         </dependency>
+        <!-- Jaeger Tracing Client -->
+        <dependency>
+            <groupId>io.jaegertracing</groupId>
+            <artifactId>jaeger-client</artifactId>
+            <version>${version.jaeger-client}</version>
+        </dependency>
+        <!-- Opentracing Spring Cloud Starter -->
+        <dependency>
+            <groupId>io.opentracing.contrib</groupId>
+            <artifactId>opentracing-spring-cloud-starter</artifactId>
+            <version>${version.opentracing-spring-cloud-starter}</version>
+        </dependency>
 	</dependencies>
 
     <profiles>

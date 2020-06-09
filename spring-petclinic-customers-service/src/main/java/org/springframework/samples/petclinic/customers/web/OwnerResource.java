@@ -64,8 +64,12 @@ class OwnerResource {
      * Update Owner
      */
     @PutMapping(value = "/{ownerId}")
-    public Owner updateOwner(@PathVariable("ownerId") int ownerId, @Valid @RequestBody Owner ownerRequest) {
+    public Owner updateOwner(@PathVariable("ownerId") int ownerId, @Valid @RequestBody Owner ownerRequest) throws RuntimeException {
         final Optional<Owner> owner = ownerRepository.findById(ownerId);
+
+        if (System.getenv("THROW_EX") != null && System.getenv("THROW_EX").equals("on")) {
+            throw new RuntimeException("induced failure... abort!");
+        }
 
         final Owner ownerModel = owner.orElseThrow(() -> new ResourceNotFoundException("Owner "+ownerId+" not found"));
         // This is done by hand for simplicity purpose. In a real life use-case we should consider using MapStruct.

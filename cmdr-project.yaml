@@ -1,0 +1,230 @@
+helm_repos:
+- name: "jaeger"
+  url: "https://jaegertracing.github.io/helm-charts"
+- name: "stable"
+  url: "https://kubernetes-charts.storage.googleapis.com/"
+- name: "bitnami"
+  url: "https://charts.bitnami.com/bitnami"
+- name: "maesh"
+  url: "https://containous.github.io/maesh/charts"
+- name: "traefik"
+  url: "https://containous.github.io/traefik-helm-chart"
+- name: "confluentinc"
+  url: "https://confluentinc.github.io/cp-helm-charts/"
+kind:
+  name: "petclinic"
+  load:
+  - petclinic-worker
+  config.yaml: |-
+    kind: Cluster
+    apiVersion: kind.sigs.k8s.io/v1alpha3
+    nodes:
+    - role: control-plane
+    - role: worker
+      extraMounts:
+      - hostPath: /home/kcrawley/kind-mount
+        containerPath: /files
+traefik:
+  tls: {}
+  #chart: "traefik/traefik"
+  chart: /mnt/development/spring-petclinic-kubernetes/helm/spring-petclinic-traefik
+  values: /mnt/development/spring-petclinic-kubernetes/helm/spring-petclinic-traefik/values.yaml
+services:
+  - name: jaeger
+    chart: jaegertracing/jaeger
+    values: /mnt/development/spring-petclinic-kubernetes/helm/spring-petclinic-observability/values-jaeger.yaml
+    forceNamespace: default
+  - name: database-server
+    chart: stable/mysql
+    values: /mnt/development/spring-petclinic-kubernetes/helm/spring-petclinic-database-server/values.yaml
+  - name: kafka-oss
+    chart: confluentinc/cp-helm-charts
+    values: /mnt/development/spring-petclinic-kubernetes/helm/spring-petclinic-kafka-server/values.yaml
+  - name: admin-server
+    image: local-build/spring-petclinic-admin-server
+    tag: local-dirty
+    chart: /mnt/development/spring-petclinic-kubernetes/helm/spring-petclinic-app
+    values: /mnt/development/spring-petclinic-kubernetes/helm/spring-petclinic-app/values.yaml
+    config:
+      local:
+        retag: True
+        env:
+          PUBLIC_URL: https://spc-admin.kevincrawley.io
+        ingress:
+          enabled: True
+          canary: False
+          domainMain: spc.kevincrawley.io
+          domainSans:
+          - spc-admin.kevincrawley.io
+          rules:
+          - host: spc-admin.kevincrawley.io
+            noPrefix: true
+  - name: customers-service-v1
+    ignoreSetup: True
+    image: local-build/spring-petclinic-customers-service
+    tag: local-dirty
+    chart: /mnt/development/spring-petclinic-kubernetes/helm/spring-petclinic-app
+    values: /mnt/development/spring-petclinic-kubernetes/helm/spring-petclinic-app/values.yaml
+    config:
+      local:
+        replicaCount: 1
+        jaeger:
+          enabled: True
+        retag: True
+        ingress:
+          enabled: False
+          rules: []
+  - name: customers-service-v2
+    ignoreSetup: True
+    image: local-build/spring-petclinic-customers-service
+    tag: local-dirty
+    chart: /mnt/development/spring-petclinic-kubernetes/helm/spring-petclinic-app
+    values: /mnt/development/spring-petclinic-kubernetes/helm/spring-petclinic-app/values.yaml
+    config:
+      local:
+        replicaCount: 1
+        env:
+          THROW_EX: "on"
+        jaeger:
+          enabled: True
+        retag: True
+        ingress:
+          enabled: False
+          rules: []
+  - name: customers-service
+    image: local-build/spring-petclinic-customers-service
+    tag: local-dirty
+    chart: /mnt/development/spring-petclinic-kubernetes/helm/spring-petclinic-app
+    values: /mnt/development/spring-petclinic-kubernetes/helm/spring-petclinic-app/values.yaml
+    config:
+      local:
+        replicaCount: 1
+        jaeger:
+          enabled: True
+        retag: True
+        canary:
+          enabled: False
+          serviceA: "customers-service-v1"
+          serviceB: "customers-service-v2"
+        ingress:
+          enabled: True
+          domainMain: spc.kevincrawley.io
+          domainSans:
+          - spc-admin.kevincrawley.io
+          rules:
+          - host: spc.kevincrawley.io
+            stripPrefix: /api/customer
+  - name: frontend-service
+    image: local-build/spring-petclinic-frontend-service
+    tag: local-dirty
+    chart: /mnt/development/spring-petclinic-kubernetes/helm/spring-petclinic-app
+    values: /mnt/development/spring-petclinic-kubernetes/helm/spring-petclinic-app/values.yaml
+    config:
+      local:
+        replicaCount: 1
+        jaeger:
+          enabled: True
+        retag: True
+        ingress:
+          enabled: True
+          canary: False
+          domainMain: spc.kevincrawley.io
+          domainSans:
+          - spc-admin.kevincrawley.io
+          rules:
+          - host: spc.kevincrawley.io
+            noPrefix: true
+  - name: notifications-service
+    image: local-build/spring-petclinic-notifications-service
+    tag: local-dirty
+    chart: /mnt/development/spring-petclinic-kubernetes/helm/spring-petclinic-app
+    values: /mnt/development/spring-petclinic-kubernetes/helm/spring-petclinic-app/values.yaml
+    config:
+      local:
+        replicaCount: 1
+        jaeger:
+          enabled: True
+        retag: True
+        ingress:
+          enabled: True
+          canary: False
+          domainMain: spc.kevincrawley.io
+          domainSans:
+          - spc-admin.kevincrawley.io
+          rules:
+          - host: spc.kevincrawley.io
+            stripPrefix: /api/notification
+  - name: owners-service
+    image: local-build/spring-petclinic-owners-service
+    tag: local-dirty
+    chart: /mnt/development/spring-petclinic-kubernetes/helm/spring-petclinic-app
+    values: /mnt/development/spring-petclinic-kubernetes/helm/spring-petclinic-app/values.yaml
+    config:
+      local:
+        replicaCount: 1
+        jaeger:
+          enabled: True
+        retag: True
+        ingress:
+          enabled: True
+          canary: False
+          domainMain: spc.kevincrawley.io
+          domainSans:
+          - spc-admin.kevincrawley.io
+          rules:
+          - host: spc.kevincrawley.io
+            stripPrefix: /api/owner
+  - name: vets-service
+    image: local-build/spring-petclinic-vets-service
+    tag: local-dirty
+    chart: /mnt/development/spring-petclinic-kubernetes/helm/spring-petclinic-app
+    values: /mnt/development/spring-petclinic-kubernetes/helm/spring-petclinic-app/values.yaml
+    config:
+      local:
+        replicaCount: 1
+        jaeger:
+          enabled: True
+        retag: True
+        ingress:
+          enabled: True
+          canary: False
+          domainMain: spc.kevincrawley.io
+          domainSans:
+          - spc-admin.kevincrawley.io
+          rules:
+          - host: spc.kevincrawley.io
+            stripPrefix: /api/vet
+  - name: visits-service
+    image: local-build/spring-petclinic-visits-service
+    tag: local-dirty
+    chart: /mnt/development/spring-petclinic-kubernetes/helm/spring-petclinic-app
+    values: /mnt/development/spring-petclinic-kubernetes/helm/spring-petclinic-app/values.yaml
+    config:
+      local:
+        replicaCount: 1
+        jaeger:
+          enabled: True
+        retag: True
+        ingress:
+          enabled: True
+          canary: False
+          domainMain: spc.kevincrawley.io
+          domainSans:
+          - spc-admin.kevincrawley.io
+          rules:
+          - host: spc.kevincrawley.io
+            stripPrefix: /api/visit
+  - name: spring-petclinic-observability
+    chart: /mnt/development/spring-petclinic-kubernetes/helm/spring-petclinic-observability
+    values: /mnt/development/spring-petclinic-kubernetes/helm/spring-petclinic-observability/values.yaml
+    forceNamespace: default
+    config:
+      default:
+        ingress:
+          domainMain: prometheus.kevincrawley.io
+          domainSans:
+          - grafana.kevincrawley.io
+          - jaeger.kevincrawley.io
+          grafana: grafana.kevincrawley.io
+          prometheus: prometheus.kevincrawley.io
+          jaeger: jaeger.kevincrawley.io

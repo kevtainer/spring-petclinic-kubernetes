@@ -1,0 +1,185 @@
+{{- if .Values.deployment.enabled -}}
+  {{- if gt (int .Values.deployment.replicas) 1 -}}
+    {{- with .Values.additionalArguments -}}
+      {{- range . -}}
+        {{- if contains ".acme." . -}}
+          {{- fail (printf "You can not enabled acme if you set more than one traefik replica") -}}
+        {{- end -}}
+      {{- end -}}
+    {{- end -}}
+  {{- end -}}
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ template "traefik.fullname" . }}
+  labels:
+    app.kubernetes.io/name: {{ template "traefik.name" . }}
+    helm.sh/chart: {{ template "traefik.chart" . }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+  annotations:
+  {{- with .Values.deployment.annotations }}
+  {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  {{- if not .Values.autoscaling.enabled }}
+  replicas: {{ default 1 .Values.deployment.replicas }}
+  {{- end }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ template "traefik.name" . }}
+      app.kubernetes.io/instance: {{ .Release.Name }}
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      {{- with .Values.rollingUpdate }}
+        {{- toYaml . | nindent 6 }}
+      {{- end }}
+  template:
+    metadata:
+      annotations:
+      {{- with .Values.deployment.podAnnotations }}
+      {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        app.kubernetes.io/name: {{ template "traefik.name" . }}
+        helm.sh/chart: {{ template "traefik.chart" . }}
+        app.kubernetes.io/managed-by: {{ .Release.Service }}
+        app.kubernetes.io/instance: {{ .Release.Name }}
+    spec:
+      serviceAccountName: {{ template "traefik.fullname" . }}
+      terminationGracePeriodSeconds: 60
+      hostNetwork: {{ .Values.hostNetwork }}
+      initContainers:
+      - name: wait-for-jaeger-init
+        image: groundnuty/k8s-wait-for:v1.3
+        imagePullPolicy: "IfNotPresent"
+        args: ["service", "-lapp.kubernetes.io/component=agent"]
+        resources:
+          requests:
+            memory: "10Mi"
+            cpu: "50m"
+          limits:
+            memory: "20Mi"
+            cpu: "100m"
+      - name: set-data-dir-perms
+        image: debian:stretch-slim
+        command: ['sh', '-c', 'chmod 600 {{ .Values.persistence.path }}/* || true']
+        volumeMounts:
+        - name: data
+          mountPath: {{ .Values.persistence.path }}
+      containers:
+      - image: {{ .Values.image.name }}:{{ .Values.image.tag }}
+        name: {{ template "traefik.fullname" . }}
+        resources:
+          {{- with .Values.resources }}
+          {{- toYaml . | nindent 10 }}
+          {{- end }}
+        readinessProbe:
+          httpGet:
+            path: /ping
+            port: {{ .Values.ports.traefik.port }}
+          failureThreshold: 1
+          initialDelaySeconds: 10
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 2
+        livenessProbe:
+          httpGet:
+            path: /ping
+            port: {{ .Values.ports.traefik.port }}
+          failureThreshold: 3
+          initialDelaySeconds: 10
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 2
+        ports:
+        {{- range $name, $config := .Values.ports }}
+        - name: {{ $name | quote }}
+          containerPort: {{ $config.port }}
+          {{- if $config.hostPort }}
+          hostPort: {{ $config.hostPort }}
+          {{- end }}
+          protocol: TCP
+        {{- end }}
+        {{- with .Values.securityContext }}
+        securityContext:
+          {{- toYaml . | nindent 10 }}
+        {{- end }}
+        volumeMounts:
+          - name: data
+            mountPath: {{ .Values.persistence.path }}
+            {{- if .Values.persistence.subPath }}
+            subPath: {{ .Values.persistence.subPath }}
+            {{- end }}
+          {{- range .Values.volumes }}
+          - name: {{ .name }}
+            mountPath: {{ .mountPath }}
+            readOnly: true
+          {{- end }}
+        args:
+          {{- with .Values.globalArguments }}
+          {{- range . }}
+          - {{ . | quote }}
+          {{- end }}
+          {{- end }}
+          {{- range $name, $config := .Values.ports }}
+          - "--entryPoints.{{$name}}.address=:{{ $config.port }}"
+          {{- end }}
+          - "--api.dashboard=true"
+          - "--ping=true"
+          - "--providers.kubernetescrd"
+          - "--providers.kubernetesingress"
+          {{- with .Values.additionalArguments }}
+          {{- range . }}
+          - {{ . | quote }}
+          {{- end }}
+          {{- end }}
+        {{- with .Values.env }}
+        env:
+          {{- toYaml . | nindent 10 }}
+        {{- end }}
+        {{- with .Values.envFrom }}
+        envFrom:
+          {{- toYaml . | nindent 10 }}
+        {{- end }}
+      volumes:
+        - name: data
+          {{- if .Values.persistence.enabled }}
+          persistentVolumeClaim:
+            claimName: {{ template "traefik.fullname" . }}
+          {{- else }}
+          emptyDir: {}
+          {{- end }}
+        {{- range .Values.volumes }}
+        - name: {{ .name }}
+          {{- if eq .type "secret" }}
+          secret:
+            secretName: {{ .name }}
+          {{- else if eq .type "configMap" }}
+          configMap:
+            name: {{ .name }}
+          {{- end }}
+        {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- if .Values.priorityClassName }}
+      priorityClassName: {{ .Values.priorityClassName }}
+      {{- end }}
+      {{- with .Values.podSecurityContext }}
+      securityContext:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+{{- end -}}

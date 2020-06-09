@@ -3,7 +3,9 @@ from faker import Faker
 from random import choice
 from random import randint
 import os
+import urllib3
 
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 fake = Faker()
 
 class UserBehavior(TaskSet):
@@ -13,12 +15,12 @@ class UserBehavior(TaskSet):
 
     @task
     def load(self):
-        self.client.get('/')
-        self.client.get('/api/vet/vets').json()
-        owners = self.client.get('/api/customer/owners').json()
+        self.client.get('/', verify=False)
+        self.client.get('/api/vet/vets', verify=False).json()
+        owners = self.client.get('/api/customer/owners', verify=False).json()
 
         for i in range(20):
-            self.client.get('/api/owner/owners/{}'.format(randint(1, len(owners))))
+            self.client.get('/api/owner/owners/{}'.format(randint(1, len(owners))), verify=False)
 
         if os.environ['INJECT'] == "1":
             if randint(1, 100) <= 25:
@@ -30,7 +32,7 @@ class UserBehavior(TaskSet):
                     "email":fake.email(),
                     "telephone": randint(1000000000,9999999999)
                 }
-                owner = self.client.post('/api/customer/owners', json=owner).json()
+                owner = self.client.post('/api/customer/owners', json=owner, verify=False).json()
                 ownerid = owner['id']
 
                 for i in range(randint(1,3)):
@@ -40,7 +42,7 @@ class UserBehavior(TaskSet):
                         "name": fake.first_name(),
                         "typeId": randint(1,6)
                     }
-                    pet = self.client.post('/api/customer/owners/{}/pets'.format(ownerid), json=pet).json()
+                    pet = self.client.post('/api/customer/owners/{}/pets'.format(ownerid), json=pet, verify=False).json()
                     petid = pet['id']
 
                     for i in range(randint(0,4)):
@@ -48,7 +50,7 @@ class UserBehavior(TaskSet):
                             "date": fake.date(),
                             "description": fake.text()
                         }
-                        self.client.post('/api/visit/owners/{}/pets/{}/visits'.format(ownerid,petid), json=visit)
+                        self.client.post('/api/visit/owners/{}/pets/{}/visits'.format(ownerid,petid), json=visit, verify=False)
 
 
 class WebsiteUser(HttpLocust):

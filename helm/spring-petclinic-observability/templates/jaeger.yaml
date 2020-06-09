@@ -1,0 +1,25 @@
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: jaeger-tls
+  labels:
+    app: jaeger
+spec:
+  entryPoints:
+  - websecure
+  routes:
+  - match: Host(`{{ .Values.ingress.jaeger }}`)
+    kind: Rule
+    services:
+    - name: jaeger-query
+      port: 80
+  tls:
+    certResolver: acmeresolver
+    {{- if .Values.ingress.domainMain }}
+    domains:
+    - main: {{ .Values.ingress.domainMain }}
+{{- with .Values.ingress.domainSans }}
+      sans:
+{{ toYaml . | indent 6 }}
+{{- end }}
+{{- end }}

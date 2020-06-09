@@ -1,0 +1,25 @@
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: grafana-tls
+  labels:
+    app: grafana
+spec:
+  entryPoints:
+  - websecure
+  routes:
+  - match: Host(`{{ .Values.ingress.grafana }}`)
+    kind: Rule
+    services:
+    - name: grafana
+      port: 3000
+  tls:
+    certResolver: acmeresolver
+    {{- if .Values.ingress.domainMain }}
+    domains:
+    - main: {{ .Values.ingress.domainMain }}
+{{- with .Values.ingress.domainSans }}
+      sans:
+{{ toYaml . | indent 6 }}
+{{- end }}
+{{- end }}

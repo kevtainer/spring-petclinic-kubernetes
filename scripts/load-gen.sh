@@ -14,8 +14,9 @@ NUM_CLIENTS=${NUM_CLIENTS:-3}
 INJECT=${INJECT:-0}
 SPC_HOST=${SPC_HOST:-http://localhost:8080}
 
-docker run \
+exec docker run \
     --rm \
+    --name=spc-load \
     --network=host \
     -e "HOST=${SPC_HOST}" \
     -e "NUM_CLIENTS=${NUM_CLIENTS}" \
